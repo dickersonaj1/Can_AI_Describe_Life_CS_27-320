@@ -1,0 +1,29 @@
+# Secrets and API credentials (CRITICAL: Never commit these!)
+.env
+.env.*
+!*.example
+secrets.json
+credentials.json
+
+# Python defaults: Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual Environments (Always download fresh via .toml files)
+.venv/
+venv/
+env/
+
+# Package Management and Databases
+.pytest_cache/
+build/
+dist/
+./chroma
+
+# System and VSC
+.clinerules
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
