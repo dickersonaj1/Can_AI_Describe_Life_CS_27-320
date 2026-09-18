@@ -1,0 +1,35 @@
+{
+  "host": null,
+  "input_file": "species_database.txt",
+  "prompt": "You are a zoologist and data curator building a structured morphological feature dictionary of the given subset of animals.\n\n### Species database\n{species_database}\n\n### Task\nRead each entry given and find common terms amongst them. Note that most terms are single terms, although they may be singular or plural (subocular, suboculars) or compound (upper head-shields, upper labials).\nOrganize the terms into primary terms, synonyms and, homonyms.\n\n### Output\nAnswer in Markdown, starting with a \"## Primary terms\" section. In alphabetical order, make one bullet per primary term:\n\n* **primary term** - synonyms: `variant 1`, `variant 2` - homonyms: `sense 1`; `sense 2`\nDo not list any more than 5 variants\n\nThen a \"## Homonyms\" section listing only the terms that are used for more than one thing, or \"None found\".\n\n### Rules\n1. Only use terms that appear in the species database above. Never invent or infer a term that is not present. Only include morphological terms.\n2. Merge some variants that differ only by case.\n3. Do not add an introduction, a conclusion or any commentary outside those two sections.",
+  "prompt_file": null,
+  "models": [
+    "llama3.1:8b",
+    "qwen2.5:7b",
+    "deepseek-r1:8b"
+  ],
+  "options": {
+    "temperature": 0.2,
+    "num_ctx": 6144,
+    "seed": 42
+  },
+  "output_dir": "extractor_outputs",
+  "log_dir": "extractor_logs",
+  "index_base": 0,
+  "log_date_format": "%m_%d",
+  "log_append": true,
+  "stream": true,
+  "keep_alive": "5m",
+  "request_timeout_seconds": 900,
+  "max_concurrency": 1,
+  "include_thinking": false,
+  "output_metadata_header": true,
+  "continue_on_error": true,
+  "write_run_summary": true,
+  "prompt_placeholder": "{species_database}",
+  "max_input_characters": null,
+  "fail_on_context_overrun": true,
+  "max_output_tokens": 1200,
+  "loop_guard": true,
+  "loop_guard_repeats": 25
+}

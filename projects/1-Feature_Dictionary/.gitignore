@@ -1,0 +1,10 @@
+# Generated extraction artefacts (model answers + run logs)
+extractor_outputs/
+extractor_logs/
+
+# Local environment and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
