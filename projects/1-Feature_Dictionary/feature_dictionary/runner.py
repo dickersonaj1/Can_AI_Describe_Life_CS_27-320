@@ -60,22 +60,28 @@ class RepeatDetector:
         """Add newly generated text and return True once a loop is detected."""
         if self._detected or not text:
             return self._detected
+
         self._buffer += text
         *lines, self._buffer = self._buffer.split("\n")
+
         for line in lines:
             stripped = line.strip()
             if len(stripped) < self._min_line_chars:
                 continue
+
             if len(self._window) == self._window.maxlen:
                 oldest = self._window[0]
                 self._counts[oldest] -= 1
                 if self._counts[oldest] <= 0:
                     del self._counts[oldest]
+
             self._window.append(stripped)
             self._counts[stripped] += 1
+
             if self._counts[stripped] >= self._threshold:
                 self._detected = True
                 return True
+
         return False
 
 
@@ -191,6 +197,7 @@ def list_installed_models(client: ollama.Client) -> set[str]:
             value = getattr(model, attribute, None)
             if isinstance(value, str) and value:
                 names.add(value)
+
     return names
 
 
@@ -214,7 +221,12 @@ def run_model(
     arrived before the interrupt. With ``loop_guard`` enabled, a generation that
     starts repeating the same lines is stopped early and flagged on the metrics.
     """
-    request: dict[str, Any] = {"keep_alive": keep_alive, "options": options or None}
+
+    request: dict[str, Any] = {
+        "keep_alive": keep_alive,
+        "options": options or None,
+    }
+
     detector = RepeatDetector(loop_guard_repeats) if loop_guard else None
     started = time.perf_counter()
     final: Any = None
@@ -225,31 +237,50 @@ def run_model(
 
     if stream:
         try:
-            for chunk in client.generate(model=model, prompt=prompt, stream=True, **request):
+            for chunk in client.generate(
+                model=model,
+                prompt=prompt,
+                stream=True,
+                **request,
+            ):
                 piece = getattr(chunk, "response", "") or ""
                 reasoning = getattr(chunk, "thinking", "") or ""
+
                 if piece:
                     response_pieces.append(piece)
                 if reasoning:
                     thinking_pieces.append(reasoning)
                 if on_chunk is not None:
                     on_chunk(piece, reasoning)
+
                 final = chunk
+
                 if detector is not None and piece and detector.feed(piece):
                     loop_detected = True
                     break
+
         except KeyboardInterrupt:
             interrupted = True
+
         response_text = "".join(response_pieces)
         thinking_text = "".join(thinking_pieces)
+
     else:
-        final = client.generate(model=model, prompt=prompt, stream=False, **request)
+        final = client.generate(
+            model=model,
+            prompt=prompt,
+            stream=False,
+            **request,
+        )
+
         response_text = getattr(final, "response", "") or ""
         thinking_text = getattr(final, "thinking", "") or ""
+
         if detector is not None and response_text and detector.feed(response_text):
             loop_detected = True
 
     wall_clock = time.perf_counter() - started
+
     metrics = metrics_from_response(
         final,
         wall_clock,
@@ -259,13 +290,16 @@ def run_model(
         interrupted=interrupted,
         loop_detected=loop_detected,
     )
+
     outcome = GenerationOutcome(
         response_text=response_text,
         thinking_text=thinking_text,
         metrics=metrics,
     )
+
     if interrupted:
         raise GenerationInterrupted(outcome)
+
     return outcome
 
 
@@ -291,6 +325,7 @@ def metrics_from_response(
             return None
 
     done_reason = getattr(response, "done_reason", None)
+
     return ModelMetrics(
         wall_clock_seconds=wall_clock_seconds,
         total_duration_ns=integer("total_duration"),

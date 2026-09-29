@@ -25,7 +25,9 @@ from pathlib import Path
 from typing import Any
 
 import ollama
+from openai import OpenAI
 
+from feature_dictionary.runners import cloud_runner
 from feature_dictionary import naming, writers
 from feature_dictionary.context import RunContext
 from feature_dictionary.runner import (
@@ -127,10 +129,32 @@ def _configure_logging(level: str) -> None:
     )
 
 
-def _parse_models(value: str) -> list[str]:
-    """Split a ``--models a,b,c`` argument."""
-    return [item.strip() for item in value.split(",") if item.strip()]
+def _parse_models(value: str) -> list[dict[str, str]]:
+    """Parse comma-separated model identifiers with optional providers."""
+    models: list[dict[str, str]] = []
 
+    for item in value.split(","):
+        item = item.strip()
+
+        if not item:
+            continue
+
+        if "=" in item:
+            provider, model_name = item.split("=", 1)
+            provider = provider.strip()
+            model_name = model_name.strip()
+        else:
+            provider = "ollama"
+            model_name = item
+
+        models.append(
+            {
+                "provider": provider,
+                "model": model_name,
+            }
+        )
+
+    return models
 
 def _overrides_from_args(args: argparse.Namespace) -> dict[str, Any]:
     """Translate command line flags into settings.json overrides."""
@@ -308,6 +332,50 @@ def _run_single(
     )
 
 
+def _run_single_openai(
+    context: RunContext,
+    client: OpenAI,
+    *,
+    index: int,
+    model: str,
+    position: int | None,
+    total: int,
+    announce: bool,
+) -> ModelRunResult:
+
+    started_at = datetime.now().astimezone()
+    if announce:
+        print(f"[{position}/{total}] {model} - running", flush=True)
+
+    try:
+        outcome = cloud_runner.run_model(
+            client,
+            model = model,
+            prompt = context.prompt_text,
+
+        )
+    
+    except Exception as exc:
+        return _failure_result(
+            context,
+            index = index,
+            model = model,
+            status = "failed",
+            message = str(exc),
+            started_at = started_at,
+        )    
+
+
+    return _write_outcome(
+        context,
+        index = index,
+        model = model,
+        started_at = started_at,
+        outcome = outcome,
+        status = "success"   
+    )
+
+
 def _execute(
     context: RunContext,
     client: ollama.Client,
@@ -361,6 +429,30 @@ def _execute(
                 LOGGER.error("a model worker crashed unexpectedly: %s", exc)
     finally:
         executor.shutdown(wait=False, cancel_futures=True)
+    return results
+
+
+def _execute_openai(
+    context: RunContext,
+    client: OpenAI,
+    jobs: list[tuple[int, str]],
+) -> list[ModelRunResult]:
+
+    results: list[ModelRunResult] = []
+
+    for position, (index, model) in enumerate(jobs, start=1):
+        results.append(
+            _run_single_openai(
+                context,
+                client,
+                index=index,
+                model=model,
+                position=position,
+                total=len(jobs),
+                announce=True,
+            )
+        )
+
     return results
 
 
@@ -431,9 +523,9 @@ def _print_dry_run(context: RunContext) -> None:
     print("  targets:")
     for position, model in enumerate(context.models):
         index = naming.model_index(position, context.index_base)
-        print(f"    {index}  {model}")
-        print(f"        answer -> {portable(writers.output_path_for(context, index, model))}")
-        print(f"        log    -> {portable(writers.log_path_for(context, index, model))}")
+        print(f"    {index}  {model.provider}:{model.model}")
+        print(f"        answer -> {portable(writers.output_path_for(context, index, model.model))}")
+        print(f"        log    -> {portable(writers.log_path_for(context, index, model.model))}")
 
     if not context.input_fits:
         print("")
@@ -504,42 +596,63 @@ def main(argv: list[str] | None = None) -> int:
     writers.ensure_directory(context.output_dir)
     writers.ensure_directory(context.log_dir)
 
-    client = create_client(context)
-    try:
-        installed = list_installed_models(client)
-    except OllamaUnavailableError as exc:
-        print(
-            f"error: cannot reach the Ollama server at {loaded.ollama_host} ({exc})",
-            file=sys.stderr,
-        )
-        print(
-            "hint: start it with 'ollama serve' or the Ollama desktop app and try again.",
-            file=sys.stderr,
-        )
-        return EXIT_CONFIGURATION_ERROR
+    has_ollama_models = any(
+        model.provider == "ollama"
+        for model in context.models
+    )
 
+    installed: set[str] = set()
+
+    if has_ollama_models:
+
+        client = create_client(context)
+
+        try:
+            installed = list_installed_models(client)
+        except OllamaUnavailableError as exc:
+            print(
+                f"error: cannot reach the Ollama server at {loaded.ollama_host} ({exc})",
+                file=sys.stderr,
+            )
+            print(
+                "hint: start it with 'ollama serve' or the Ollama desktop app and try again.",
+                file=sys.stderr,
+            )
+            return EXIT_CONFIGURATION_ERROR
+
+    openai_jobs: list[tuple[int, str]] = []    
     jobs: list[tuple[int, str]] = []
     results: list[ModelRunResult] = []
+
     for position, model in enumerate(context.models):
         index = naming.model_index(position, context.index_base)
-        if model in installed:
-            jobs.append((index, model))
-            continue
-        message = f"model is not installed locally; run `ollama pull {model}` first"
-        LOGGER.warning("%s - %s", model, message)
-        results.append(
-            _failure_result(
-                context,
-                index=index,
-                model=model,
-                status="skipped",
-                message=message,
-                started_at=datetime.now().astimezone(),
+
+        if model.provider == "ollama":
+            if model.model in installed:
+                jobs.append((index, model.model))
+                continue
+            message = f"model is not installed locally; run `ollama pull {model.model}` first"
+            LOGGER.warning("%s - %s", model.model, message)
+            results.append(
+                _failure_result(
+                    context,
+                    index=index,
+                    model=model.model,
+                    status="skipped",
+                    message=message,
+                    started_at=datetime.now().astimezone(),
+                )
             )
-        )
-        if not loaded.settings.continue_on_error:
-            print(f"error: {model} — {message}", file=sys.stderr)
-            return EXIT_CONFIGURATION_ERROR
+
+            if not loaded.settings.continue_on_error:
+                print(f"error: {model} — {message}", file=sys.stderr)
+                return EXIT_CONFIGURATION_ERROR
+
+
+        if model.provider == "openai":
+            openai_jobs.append((index, model.model))
+
+
 
     print(
         f"input : {writers.portable_path(loaded.input_path, loaded.base_dir)}"
@@ -556,14 +669,16 @@ def main(argv: list[str] | None = None) -> int:
     print("")
 
     interrupted = False
-    try:
-        results.extend(_execute(context, client, jobs))
-    except RunInterrupted as exc:
-        results.append(exc.result)
-        interrupted = True
-    except KeyboardInterrupt:
-        LOGGER.warning("interrupted before the next model started")
-        interrupted = True
+
+    if jobs:
+        try:
+            results.extend(_execute(context, client, jobs))
+        except RunInterrupted as exc:
+            results.append(exc.result)
+            interrupted = True
+        except KeyboardInterrupt:
+            LOGGER.warning("interrupted before the next model started")
+            interrupted = True
 
     if interrupted:
         known = {result.index for result in results}
@@ -580,6 +695,13 @@ def main(argv: list[str] | None = None) -> int:
                     started_at=datetime.now().astimezone(),
                 )
             )
+
+    if openai_jobs:
+        openai_client = OpenAI()
+        results.extend(
+            _execute_openai(context, openai_client, openai_jobs)
+        )
+
     results.sort(key=lambda item: item.index)
 
     print("")

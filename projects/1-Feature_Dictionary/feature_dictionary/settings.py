@@ -12,9 +12,16 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 
 DEFAULT_SETTINGS_FILENAME = "settings.json"
 DEFAULT_PLACEHOLDER = "{species_database}"
@@ -25,6 +32,11 @@ DEFAULT_LOOP_GUARD_REPEATS = 25
 
 class SettingsError(RuntimeError):
     """Raised when the settings file is missing, malformed or inconsistent."""
+
+
+class ModelConfig(BaseModel):
+    provider: Literal["ollama", "openai"]
+    model: str   
 
 
 class ExtractorSettings(BaseModel):
@@ -39,7 +51,23 @@ class ExtractorSettings(BaseModel):
     input_file: Path = Path("species_database.txt")
     prompt: str | None = None
     prompt_file: Path | None = None
-    models: list[str] = Field(min_length=1)
+    models: list[ModelConfig] = Field(min_length=1)
+
+    @field_validator("models", mode="before")
+    @classmethod
+    def _normalize_models(cls, value: Any) -> Any:
+        """Treat legacy model strings as Ollama model configurations."""
+        if not isinstance(value, list):
+            return value
+
+        return [
+            {"provider": "ollama", "model": model}
+            if isinstance(model, str)
+            else model
+            for model in value
+        ]
+
+
     options: dict[str, Any] = Field(default_factory=dict)
     output_dir: Path = Path("extractor_outputs")
     log_dir: Path = Path("extractor_logs")
@@ -106,7 +134,7 @@ class LoadedSettings:
     ollama_host: str
 
     @property
-    def models(self) -> list[str]:
+    def models(self) -> list[ModelConfig]:
         return self.settings.models
 
 

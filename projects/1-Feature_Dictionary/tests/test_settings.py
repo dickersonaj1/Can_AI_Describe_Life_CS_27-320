@@ -34,7 +34,9 @@ def write_settings(tmp_path: Path, **overrides) -> Path:
 
 def test_defaults_are_applied_and_paths_resolved(tmp_path):
     loaded = load_settings(write_settings(tmp_path))
-    assert loaded.models == ["llama3.1:8b"]
+    assert len(loaded.models) == 1
+    assert loaded.models[0].provider == "ollama"
+    assert loaded.models[0].model == "llama3.1:8b"
     assert loaded.base_dir == tmp_path
     assert loaded.input_path == (tmp_path / "species_database.txt").resolve()
     assert loaded.output_dir == (tmp_path / "extractor_outputs").resolve()
@@ -65,7 +67,9 @@ def test_tilde_paths_are_expanded(tmp_path, monkeypatch):
 def test_command_line_overrides_win(tmp_path):
     path = write_settings(tmp_path, models=["llama3.1:8b", "qwen3:8b"])
     loaded = load_settings(path, overrides={"models": ["gemma3:12b"]})
-    assert loaded.models == ["gemma3:12b"]
+    assert len(loaded.models) == 1
+    assert loaded.models[0].provider == "ollama"
+    assert loaded.models[0].model == "gemma3:12b"
 
 
 def test_prompt_file_override_replaces_the_inline_prompt(tmp_path):
