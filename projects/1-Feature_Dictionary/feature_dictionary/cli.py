@@ -29,8 +29,9 @@ from dotenv import load_dotenv
 import ollama
 from anthropic import Anthropic
 from openai import OpenAI
+from google import genai
 
-from feature_dictionary.runners import anthropic_runner, cloud_runner
+from feature_dictionary.runners import anthropic_runner, cloud_runner, gemini_runner
 from feature_dictionary import naming, writers
 from feature_dictionary.context import RunContext
 from feature_dictionary.runner import (
@@ -61,6 +62,10 @@ MODEL_ALIASES: dict[str, dict[str, str]] = {
     "claude": {
         "provider": "anthropic",
         "model": "claude-sonnet-4-5-20250929",
+    },
+    "gemini": {
+        "provider": "gemini",
+        "model": "gemini-3.8-flash",
     },
 }
 
@@ -440,6 +445,53 @@ def _run_single_anthropic(
             started_at=started_at,
         )
 
+
+def _run_single_gemini(
+    context: RunContext,
+    client: genai.Client,
+    *,
+    index: int,
+    model: str,
+    position: int | None,
+    total: int,
+    announce: bool,
+) -> ModelRunResult:
+
+    started_at = datetime.now().astimezone()
+
+    if announce:
+        print(f"[{position}/{total}] {model} - running", flush=True)
+
+    try:
+        outcome = gemini_runner.run_model(
+            client,
+            model=model,
+            prompt=context.prompt_text,
+        )
+
+        if announce:
+            _print_cloud_response(outcome)
+
+    except Exception as exc:
+        return _failure_result(
+            context,
+            index=index,
+            model=model,
+            status="failed",
+            message=str(exc),
+            started_at=started_at,
+        )
+
+    return _write_outcome(
+        context,
+        index=index,
+        model=model,
+        started_at=started_at,
+        outcome=outcome,
+        status="success",
+    )
+
+
     return _write_outcome(
         context,
         index=index,
@@ -552,6 +604,29 @@ def _execute_anthropic(
 
     return results
 
+
+def _execute_gemini(
+    context: RunContext,
+    client: genai.Client,
+    jobs: list[tuple[int, str]],
+) -> list[ModelRunResult]:
+
+    results: list[ModelRunResult] = []
+
+    for position, (index, model) in enumerate(jobs, start=1):
+        results.append(
+            _run_single_gemini(
+                context,
+                client,
+                index=index,
+                model=model,
+                position=position,
+                total=len(jobs),
+                announce=True,
+            )
+        )
+
+    return results
 
 
 def _report(context: RunContext, result: ModelRunResult) -> None:
@@ -722,6 +797,7 @@ def main(argv: list[str] | None = None) -> int:
 
     openai_jobs: list[tuple[int, str]] = []
     anthropic_jobs: list[tuple[int, str]] = []
+    gemini_jobs: list[tuple[int, str]] = []
     jobs: list[tuple[int, str]] = []
     results: list[ModelRunResult] = []
 
@@ -756,6 +832,9 @@ def main(argv: list[str] | None = None) -> int:
         if model.provider == "anthropic":
             anthropic_jobs.append((index, model.model))
 
+        if model.provider == "gemini":
+            gemini_jobs.append((index, model.model))
+
 
 
     print(
@@ -767,7 +846,7 @@ def main(argv: list[str] | None = None) -> int:
         f" {context.estimated_prompt_tokens:,} tokens (num_ctx {context.num_ctx:,})"
     )
 
-    queued_count = len(jobs) + len(openai_jobs) + len(anthropic_jobs)
+    queued_count = len(jobs) + len(openai_jobs) + len(anthropic_jobs) + len(gemini_jobs)
 
     print(
         f"models: {len(context.models)} requested, {queued_count} queued"
@@ -813,6 +892,12 @@ def main(argv: list[str] | None = None) -> int:
         anthropic_client = Anthropic()
         results.extend(
             _execute_anthropic(context, anthropic_client, anthropic_jobs)
+        )
+
+    if gemini_jobs:
+        gemini_client = genai.Client()
+        results.extend(
+            _execute_gemini(context, gemini_client, gemini_jobs)
         )
 
     results.sort(key=lambda item: item.index)

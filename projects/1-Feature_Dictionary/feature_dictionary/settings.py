@@ -35,7 +35,7 @@ class SettingsError(RuntimeError):
 
 
 class ModelConfig(BaseModel):
-    provider: Literal["ollama", "openai", "anthropic"]
+    provider: Literal["ollama", "openai", "anthropic", "gemini"]
     model: str   
 
 
