@@ -35,8 +35,10 @@ class SettingsError(RuntimeError):
 
 
 class ModelConfig(BaseModel):
-    provider: Literal["ollama", "openai"]
+    provider: Literal["ollama", "openai", "anthropic"]
     model: str   
+
+
 
 
 class ExtractorSettings(BaseModel):

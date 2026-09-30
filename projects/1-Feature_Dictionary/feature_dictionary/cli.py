@@ -24,10 +24,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
+
 import ollama
+from anthropic import Anthropic
 from openai import OpenAI
 
-from feature_dictionary.runners import cloud_runner
+from feature_dictionary.runners import anthropic_runner, cloud_runner
 from feature_dictionary import naming, writers
 from feature_dictionary.context import RunContext
 from feature_dictionary.runner import (
@@ -49,6 +52,17 @@ EXIT_SUCCESS = 0
 EXIT_MODEL_FAILURE = 1
 EXIT_CONFIGURATION_ERROR = 2
 EXIT_INTERRUPTED = 130
+
+MODEL_ALIASES: dict[str, dict[str, str]] = {
+    "gpt": {
+        "provider": "openai",
+        "model": "gpt-5.4-nano",
+    },
+    "claude": {
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5-20250929",
+    },
+}
 
 STATUS_MESSAGES = {
     "interrupted": "the run was interrupted by the user; this answer is incomplete",
@@ -130,13 +144,17 @@ def _configure_logging(level: str) -> None:
 
 
 def _parse_models(value: str) -> list[dict[str, str]]:
-    """Parse comma-separated model identifiers with optional providers."""
+    """Parse comma-separated model aliases or explicit provider/model identifiers."""
     models: list[dict[str, str]] = []
 
     for item in value.split(","):
         item = item.strip()
 
         if not item:
+            continue
+
+        if item in MODEL_ALIASES:
+            models.append(MODEL_ALIASES[item].copy())
             continue
 
         if "=" in item:
@@ -182,6 +200,13 @@ def _console_streamer() -> Callable[[str, str], None]:
             sys.stdout.flush()
 
     return on_chunk
+
+
+def _print_cloud_response(outcome: GenerationOutcome) -> None:
+    """Print a completed cloud-model response to stdout."""
+    print()
+    print(outcome.response_text)
+    print()
 
 
 def _failure_result(
@@ -354,6 +379,9 @@ def _run_single_openai(
             prompt = context.prompt_text,
 
         )
+
+        if announce:
+            _print_cloud_response(outcome)
     
     except Exception as exc:
         return _failure_result(
@@ -375,6 +403,51 @@ def _run_single_openai(
         status = "success"   
     )
 
+
+def _run_single_anthropic(
+    context: RunContext,
+    client: Anthropic,
+    *,
+    index: int,
+    model: str,
+    position: int | None,
+    total: int,
+    announce: bool,
+) -> ModelRunResult:
+
+    started_at = datetime.now().astimezone()
+
+    if announce:
+        print(f"[{position}/{total}] {model} - running", flush=True)
+
+    try:
+        outcome = anthropic_runner.run_model(
+            client,
+            model=model,
+            prompt=context.prompt_text,
+        )
+
+        if announce:
+            _print_cloud_response(outcome)
+
+    except Exception as exc:
+        return _failure_result(
+            context,
+            index=index,
+            model=model,
+            status="failed",
+            message=str(exc),
+            started_at=started_at,
+        )
+
+    return _write_outcome(
+        context,
+        index=index,
+        model=model,
+        started_at=started_at,
+        outcome=outcome,
+        status="success",
+    )
 
 def _execute(
     context: RunContext,
@@ -454,6 +527,31 @@ def _execute_openai(
         )
 
     return results
+    
+
+def _execute_anthropic(
+    context: RunContext,
+    client: Anthropic,
+    jobs: list[tuple[int, str]],
+) -> list[ModelRunResult]:
+
+    results: list[ModelRunResult] = []
+
+    for position, (index, model) in enumerate(jobs, start=1):
+        results.append(
+            _run_single_anthropic(
+                context,
+                client,
+                index=index,
+                model=model,
+                position=position,
+                total=len(jobs),
+                announce=True,
+            )
+        )
+
+    return results
+
 
 
 def _report(context: RunContext, result: ModelRunResult) -> None:
@@ -558,6 +656,8 @@ def main(argv: list[str] | None = None) -> int:
     Used by ``extractor.py``, ``python -m feature_dictionary`` and the
     ``feature-dictionary`` console script.
     """
+    load_dotenv()
+
     args = build_parser().parse_args(argv)
     _configure_logging(args.log_level)
 
@@ -620,7 +720,8 @@ def main(argv: list[str] | None = None) -> int:
             )
             return EXIT_CONFIGURATION_ERROR
 
-    openai_jobs: list[tuple[int, str]] = []    
+    openai_jobs: list[tuple[int, str]] = []
+    anthropic_jobs: list[tuple[int, str]] = []
     jobs: list[tuple[int, str]] = []
     results: list[ModelRunResult] = []
 
@@ -652,6 +753,9 @@ def main(argv: list[str] | None = None) -> int:
         if model.provider == "openai":
             openai_jobs.append((index, model.model))
 
+        if model.provider == "anthropic":
+            anthropic_jobs.append((index, model.model))
+
 
 
     print(
@@ -662,8 +766,11 @@ def main(argv: list[str] | None = None) -> int:
         f"prompt: {len(context.prompt_text):,} characters, about"
         f" {context.estimated_prompt_tokens:,} tokens (num_ctx {context.num_ctx:,})"
     )
+
+    queued_count = len(jobs) + len(openai_jobs) + len(anthropic_jobs)
+
     print(
-        f"models: {len(context.models)} requested, {len(jobs)} queued"
+        f"models: {len(context.models)} requested, {queued_count} queued"
         f" | run mode: {context.run_mode}"
     )
     print("")
@@ -700,6 +807,12 @@ def main(argv: list[str] | None = None) -> int:
         openai_client = OpenAI()
         results.extend(
             _execute_openai(context, openai_client, openai_jobs)
+        )
+
+    if anthropic_jobs:
+        anthropic_client = Anthropic()
+        results.extend(
+            _execute_anthropic(context, anthropic_client, anthropic_jobs)
         )
 
     results.sort(key=lambda item: item.index)
