@@ -9,3 +9,11 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .env
+
+# Generated synthesis results and archives
+synthesis_outputs/
+
+# Local experimental data
+Test Data/
+tests/250k
+tests/ALL_SNAKES!!!.txt

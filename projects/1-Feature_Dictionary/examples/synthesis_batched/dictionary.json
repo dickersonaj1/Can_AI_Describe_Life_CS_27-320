@@ -1,0 +1,234 @@
+{
+  "schema_version": "2.0",
+  "status": "proposed_requires_review",
+  "synthesis_run": {
+    "model": "synthetic-fixture",
+    "response_id": null,
+    "prompt_sha256": "b1b7b4e0356c52f95af36201232644bbaeb166f2cbd771377ee7a9d0150f3c55"
+  },
+  "sources": [
+    {
+      "id": "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3",
+      "output_path": "model_a.md",
+      "model": "synthetic-model-a",
+      "extraction_run_id": null,
+      "prompt_fingerprint": null,
+      "sha256": "800654b54517dbd8d9bec882a6b8dd8e384bab819fa55be0f8e86552898e013f",
+      "raw_bytes_b64": "PCEtLQptb2RlbDogc3ludGhldGljLW1vZGVsLWEKc3RhdHVzOiBzdWNjZXNzCi0tPgojIyBQcmltYXJ5IHRlcm1zCiogKipoZWFkKiogLSBzeW5vbnltczogLSBob21vbnltczoKKiAqKmhlYWQgc2NhbGVzKiogLSBzeW5vbnltczogLSBob21vbnltczoK",
+      "metadata": [
+        {
+          "key": "model",
+          "value": "synthetic-model-a"
+        },
+        {
+          "key": "status",
+          "value": "success"
+        }
+      ]
+    },
+    {
+      "id": "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d",
+      "output_path": "model_b.md",
+      "model": "synthetic-model-b",
+      "extraction_run_id": null,
+      "prompt_fingerprint": null,
+      "sha256": "e70ef115bd247c599eca55323afdc3fc1d0521935a5050798e2b6a02160322f8",
+      "raw_bytes_b64": "PCEtLQptb2RlbDogc3ludGhldGljLW1vZGVsLWIKc3RhdHVzOiBzdWNjZXNzCi0tPgojIyBQcmltYXJ5IHRlcm1zCiogKipzY2FsZXMqKiAtIHN5bm9ueW1zOiAtIGhvbW9ueW1zOgoqICoqaGVhZCBzY2FsZXMqKiAtIHN5bm9ueW1zOiAtIGhvbW9ueW1zOgo=",
+      "metadata": [
+        {
+          "key": "model",
+          "value": "synthetic-model-b"
+        },
+        {
+          "key": "status",
+          "value": "success"
+        }
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "id": "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3_line_6",
+      "source_id": "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3",
+      "line": 6,
+      "raw_text": "* **head** - synonyms: - homonyms:",
+      "category": "term_entry",
+      "observed_terms": [
+        "head"
+      ],
+      "synonym_claims": [],
+      "homonym_claims": []
+    },
+    {
+      "id": "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3_line_7",
+      "source_id": "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3",
+      "line": 7,
+      "raw_text": "* **head scales** - synonyms: - homonyms:",
+      "category": "term_entry",
+      "observed_terms": [
+        "head scales"
+      ],
+      "synonym_claims": [],
+      "homonym_claims": []
+    },
+    {
+      "id": "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d_line_6",
+      "source_id": "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d",
+      "line": 6,
+      "raw_text": "* **scales** - synonyms: - homonyms:",
+      "category": "term_entry",
+      "observed_terms": [
+        "scales"
+      ],
+      "synonym_claims": [],
+      "homonym_claims": []
+    },
+    {
+      "id": "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d_line_7",
+      "source_id": "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d",
+      "line": 7,
+      "raw_text": "* **head scales** - synonyms: - homonyms:",
+      "category": "term_entry",
+      "observed_terms": [
+        "head scales"
+      ],
+      "synonym_claims": [],
+      "homonym_claims": []
+    }
+  ],
+  "terms": [
+    {
+      "id": "term_03abaaf090cee6ffe6cc39f4fd68bd791888ff3684556f20f4dfc201c608008a",
+      "kind": "structure",
+      "characteristic_type": null,
+      "sense_note": null,
+      "scope_note": null,
+      "expressions": [
+        {
+          "text": "head",
+          "role": "preferred",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3_line_6"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "term_f1df8d8ee709eae28d2f6342467093eaae144069a49b10ef4e2057f67b39ab9c",
+      "kind": "structure",
+      "characteristic_type": null,
+      "sense_note": null,
+      "scope_note": null,
+      "expressions": [
+        {
+          "text": "head scales",
+          "role": "preferred",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3_line_7",
+            "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d_line_7"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "term_e854419b877cf962db306e393e9915cab1cf4d9b4a45c14b81cae8a3bb4b82e7",
+      "kind": "structure",
+      "characteristic_type": null,
+      "sense_note": null,
+      "scope_note": null,
+      "expressions": [
+        {
+          "text": "scales",
+          "role": "preferred",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d_line_6"
+          ]
+        }
+      ],
+      "notes": ""
+    }
+  ],
+  "relationships": [
+    {
+      "subject_id": "term_f1df8d8ee709eae28d2f6342467093eaae144069a49b10ef4e2057f67b39ab9c",
+      "predicate": "part_of",
+      "object_id": "term_03abaaf090cee6ffe6cc39f4fd68bd791888ff3684556f20f4dfc201c608008a",
+      "status": "proposed",
+      "basis": "model_inference",
+      "observation_ids": [
+        "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3_line_7",
+        "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d_line_7"
+      ],
+      "rationale": "Synthetic cross-batch inference, unverified"
+    },
+    {
+      "subject_id": "term_f1df8d8ee709eae28d2f6342467093eaae144069a49b10ef4e2057f67b39ab9c",
+      "predicate": "subtype_of",
+      "object_id": "term_e854419b877cf962db306e393e9915cab1cf4d9b4a45c14b81cae8a3bb4b82e7",
+      "status": "proposed",
+      "basis": "model_inference",
+      "observation_ids": [
+        "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3_line_7",
+        "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d_line_7"
+      ],
+      "rationale": "Synthetic cross-batch inference, unverified"
+    }
+  ],
+  "observation_dispositions": [
+    {
+      "observation_id": "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3_line_6",
+      "status": "mapped",
+      "term_ids": [
+        "term_03abaaf090cee6ffe6cc39f4fd68bd791888ff3684556f20f4dfc201c608008a"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3_line_7",
+      "status": "mapped",
+      "term_ids": [
+        "term_f1df8d8ee709eae28d2f6342467093eaae144069a49b10ef4e2057f67b39ab9c"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d_line_6",
+      "status": "mapped",
+      "term_ids": [
+        "term_e854419b877cf962db306e393e9915cab1cf4d9b4a45c14b81cae8a3bb4b82e7"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d_line_7",
+      "status": "mapped",
+      "term_ids": [
+        "term_f1df8d8ee709eae28d2f6342467093eaae144069a49b10ef4e2057f67b39ab9c"
+      ],
+      "reason": null
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "POSSIBLY_INCOMPLETE",
+      "path": "/sources/src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3",
+      "message": "Expected Homonyms section is absent; review completeness."
+    },
+    {
+      "severity": "warning",
+      "code": "POSSIBLY_INCOMPLETE",
+      "path": "/sources/src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d",
+      "message": "Expected Homonyms section is absent; review completeness."
+    }
+  ],
+  "review_notes": []
+}

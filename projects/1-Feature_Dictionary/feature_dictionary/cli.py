@@ -445,6 +445,15 @@ def _run_single_anthropic(
             started_at=started_at,
         )
 
+    return _write_outcome(
+        context,
+        index=index,
+        model=model,
+        started_at=started_at,
+        outcome=outcome,
+        status="success",
+    )
+
 
 def _run_single_gemini(
     context: RunContext,
@@ -491,15 +500,6 @@ def _run_single_gemini(
         status="success",
     )
 
-
-    return _write_outcome(
-        context,
-        index=index,
-        model=model,
-        started_at=started_at,
-        outcome=outcome,
-        status="success",
-    )
 
 def _execute(
     context: RunContext,

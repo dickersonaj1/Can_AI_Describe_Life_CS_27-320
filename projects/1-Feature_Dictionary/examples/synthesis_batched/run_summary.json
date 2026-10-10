@@ -1,0 +1,104 @@
+{
+  "version": "staged-1",
+  "plan_sha256": "1202be3a76e9144752ddaa3d27105889c2453b0086668e943cfda0334c3c9334",
+  "coverage_mode": "comprehensive",
+  "completed_jobs": [
+    {
+      "stage": "local",
+      "job_id": "e66ff89de4e16701be6fd90877ca98097f21f2b4fe1b95bee9e9d13778dba609"
+    },
+    {
+      "stage": "local",
+      "job_id": "6f79810f08cba26e5d1a27e7296039822422a0e6a53bba439b3a8933f908e29c"
+    },
+    {
+      "stage": "reconcile",
+      "job_id": "2d3018358b105f08cf191630bb7063bc27ef462a8e26e6c7d46755097cb00aed"
+    },
+    {
+      "stage": "relationships",
+      "job_id": "57a4fa8df677524c770ab49a0362120a799a9b7ccc29d97fa44a1880f6cabc59"
+    }
+  ],
+  "completed_comparisons": [
+    {
+      "stage": "reconcile",
+      "job_id": "2d3018358b105f08cf191630bb7063bc27ef462a8e26e6c7d46755097cb00aed",
+      "comparisons": [
+        [
+          "b1:c0",
+          "b1:c1"
+        ],
+        [
+          "b1:c0",
+          "b2:c0"
+        ],
+        [
+          "b1:c0",
+          "b2:c1"
+        ],
+        [
+          "b1:c1",
+          "b2:c0"
+        ],
+        [
+          "b1:c1",
+          "b2:c1"
+        ],
+        [
+          "b2:c0",
+          "b2:c1"
+        ]
+      ]
+    },
+    {
+      "stage": "relationships",
+      "job_id": "57a4fa8df677524c770ab49a0362120a799a9b7ccc29d97fa44a1880f6cabc59",
+      "comparisons": [
+        [
+          "b1:c0",
+          "b1:c1"
+        ],
+        [
+          "b1:c0",
+          "b2:c1"
+        ],
+        [
+          "b1:c1",
+          "b1:c0"
+        ],
+        [
+          "b1:c1",
+          "b2:c1"
+        ],
+        [
+          "b2:c1",
+          "b1:c0"
+        ],
+        [
+          "b2:c1",
+          "b1:c1"
+        ]
+      ]
+    }
+  ],
+  "compatible_relationship_comparisons": 6,
+  "reviewed_relationship_comparisons": 6,
+  "concept_mapping": {
+    "b1:c0": "b1:c0",
+    "b1:c1": "b1:c1",
+    "b2:c0": "b1:c1",
+    "b2:c1": "b2:c1"
+  },
+  "candidate_to_final_id": {
+    "b1:c0": "term_03abaaf090cee6ffe6cc39f4fd68bd791888ff3684556f20f4dfc201c608008a",
+    "b1:c1": "term_f1df8d8ee709eae28d2f6342467093eaae144069a49b10ef4e2057f67b39ab9c",
+    "b2:c0": "term_f1df8d8ee709eae28d2f6342467093eaae144069a49b10ef4e2057f67b39ab9c",
+    "b2:c1": "term_e854419b877cf962db306e393e9915cab1cf4d9b4a45c14b81cae8a3bb4b82e7"
+  },
+  "usage_all_archived_attempts": {
+    "input_tokens": 40,
+    "output_tokens": 80
+  },
+  "dictionary_sha256": "e31b871d640c8221c8797e2c291fe2cf31ff31f3ee827ccc46b4ffa6ea450b9f"
+}
