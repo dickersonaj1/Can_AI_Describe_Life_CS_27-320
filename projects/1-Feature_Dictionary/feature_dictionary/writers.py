@@ -10,13 +10,27 @@ same way on Windows, in GitHub and in an editor:
 
 from __future__ import annotations
 
+import hashlib
+import json
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 from feature_dictionary import naming
 from feature_dictionary.context import RunContext
+from feature_dictionary.extraction_v3 import (
+    EvidenceReport,
+    ExtractionDocument,
+    ExtractionDocumentV31,
+    ExtractionInput,
+    ExtractionRun,
+    text_sha256,
+    validate_response,
+)
 from feature_dictionary.runner import ModelRunResult
+from feature_dictionary.settings import DEFAULT_ANTHROPIC_OUTPUT_TOKENS
 
 SUMMARY_COLUMNS = (
     "#",
@@ -68,13 +82,246 @@ def write_text(path: Path, content: str, *, append: bool = False) -> None:
         with path.open("a", encoding="utf-8", newline="\n") as handle:
             handle.write("\n" + content)
         return
-    with path.open("w", encoding="utf-8", newline="\n") as handle:
+    with path.open("x", encoding="utf-8", newline="\n") as handle:
         handle.write(content)
+
+
+class OutputCollisionError(RuntimeError):
+    """An extraction destination or run identity is already reserved."""
+
+
+@contextmanager
+def reserve_run(run: RunContext) -> Iterator[None]:
+    """Check destinations and reserve identity before contacting any provider.
+
+    Exclusive locks serialize cooperating writers sharing either directory. The
+    permanent JSON receipt prevents run-ID reuse, even if a run produced no answer.
+    """
+    owned_locks: list[Path] = []
+    try:
+        for directory in sorted({run.output_dir, run.log_dir}):
+            ensure_directory(directory)
+            lock = directory / ".extraction.lock"
+            try:
+                with lock.open("x", encoding="utf-8") as handle:
+                    owned_locks.append(lock)
+                    handle.write(run.run_id + "\n")
+            except FileExistsError as exc:
+                raise OutputCollisionError(
+                    f"extraction directory is reserved: {directory}; use a fresh directory. "
+                    "If a previous process crashed, inspect .extraction.lock before removing it."
+                ) from exc
+
+        outputs = [
+            output_path_for(run, naming.model_index(position, run.index_base), model.model)
+            for position, model in enumerate(run.models)
+        ]
+        targets = list(outputs)
+        if run.settings.settings.extraction_format == "v3":
+            if run.original_input_bytes is None:
+                raise OutputCollisionError("v3 requires an original input-byte snapshot")
+            targets.extend(run_archive_paths(run).values())
+            for position, model in enumerate(run.models):
+                index = naming.model_index(position, run.index_base)
+                targets.extend(v3_artifact_paths(run, index, model.model).values())
+        if not run.settings.settings.log_append:
+            targets.extend(
+                log_path_for(run, naming.model_index(position, run.index_base), model.model)
+                for position, model in enumerate(run.models)
+            )
+            if run.settings.settings.write_run_summary:
+                targets.append(summary_path_for(run))
+        # is_symlink also catches dangling links; never follow them into an archive.
+        collisions = [path for path in dict.fromkeys(targets) if path.exists() or path.is_symlink()]
+        if collisions:
+            raise OutputCollisionError(
+                "refusing to overwrite extraction artifacts: "
+                + ", ".join(str(path) for path in collisions)
+                + "; choose a fresh --output-dir and/or --log-dir."
+            )
+
+        identity = hashlib.sha256(run.run_id.encode("utf-8")).hexdigest()
+        for directory in sorted({run.output_dir, run.log_dir}):
+            receipt = directory / ".extraction_runs" / f"{identity}.json"
+            try:
+                write_text(
+                    receipt,
+                    json.dumps(
+                        {
+                            "run_id": run.run_id,
+                            "prompt_fingerprint": run.prompt_fingerprint,
+                            "outputs": [str(path) for path in outputs],
+                        },
+                        indent=2,
+                    )
+                    + "\n",
+                )
+            except FileExistsError as exc:
+                raise OutputCollisionError(
+                    f"extraction run ID already exists: {run.run_id}; start a new run."
+                ) from exc
+        if run.settings.settings.extraction_format == "v3":
+            archive_v3_input(run)
+        yield
+    finally:
+        for lock in reversed(owned_locks):
+            lock.unlink()
 
 
 def output_path_for(run: RunContext, index: int, model: str) -> Path:
     """``{i}_<model_name>.md`` inside the output directory."""
-    return run.output_dir / naming.output_filename(index, model)
+    path = run.output_dir / naming.output_filename(index, model)
+    return path.with_suffix(".json") if run.settings.settings.extraction_format == "v3" else path
+
+
+def run_archive_paths(run: RunContext) -> dict[str, Path]:
+    identity = hashlib.sha256(run.run_id.encode("utf-8")).hexdigest()
+    folder = run.output_dir / ".extraction_runs"
+    return {
+        "input": folder / f"{identity}.input.bin",
+        "prompt": folder / f"{identity}.prompt.txt",
+    }
+
+
+def archive_v3_input(run: RunContext) -> None:
+    """Called under the reservation, before any provider is constructed."""
+    if run.original_input_bytes is None:
+        raise OutputCollisionError("v3 requires an original input-byte snapshot")
+    paths = run_archive_paths(run)
+    with paths["input"].open("xb") as handle:
+        handle.write(run.original_input_bytes)
+    write_text(paths["prompt"], run.prompt_text)
+
+
+def v3_artifact_paths(run: RunContext, index: int, model: str) -> dict[str, Path]:
+    document = output_path_for(run, index, model)
+    return {
+        "document": document,
+        "raw": document.with_suffix(".raw.json"),
+        "validation": document.with_suffix(".validation.json"),
+    }
+
+
+def write_v3_output(
+    run: RunContext,
+    *,
+    index: int,
+    model: str,
+    finished_at: datetime,
+    response_text: str,
+    thinking_text: str,
+    status: str,
+    completion_reason: str | None,
+    response_available: bool = True,
+    error: str | None = None,
+) -> EvidenceReport:
+    """Archive returned strings first; validate once; publish only accepted evidence.
+
+    A raw artifact is the shared runner's returned text and reasoning, not a full
+    provider SDK envelope. No-response failures are explicitly distinguished from
+    an actual empty response. Invalid candidates remain in the raw/report files.
+    """
+    paths = v3_artifact_paths(run, index, model)
+    archives = run_archive_paths(run)
+    if run.original_input_bytes is None:
+        raise OutputCollisionError("v3 requires an original input-byte snapshot")
+    input_record = ExtractionInput(
+        source_path=portable_path(run.settings.input_path, run.settings.base_dir),
+        original_file_sha256=hashlib.sha256(run.original_input_bytes).hexdigest(),
+        original_file_archive=archives["input"].relative_to(run.output_dir).as_posix(),
+        supplied_text=run.database_text,
+        supplied_text_sha256=text_sha256(run.database_text),
+        truncated=run.input_truncated,
+    )
+    run_record = ExtractionRun(
+        run_id=run.run_id,
+        provider=run.models[index - run.index_base].provider,
+        model=model,
+        prompt_version=run.prompt_version,
+        prompt_template_sha256=run.prompt_template_sha256,
+        rendered_prompt_fingerprint=run.prompt_fingerprint,
+        completion_status=status,
+        completion_reason=completion_reason,
+    )
+    provenance = {
+        "candidate_format_version": f"extraction-{run.settings.settings.v3_candidate_version}",
+        "input": input_record.model_dump(),
+        "run": run_record.model_dump(),
+        "model_index": index,
+        "generated_at": finished_at.isoformat(),
+        "prompt_path": run.prompt_path,
+        "rendered_prompt_archive": archives["prompt"].relative_to(run.output_dir).as_posix(),
+        "output_token_limit": _output_limit(run, run_record.provider),
+        "settings_file": portable_path(run.settings.path, run.settings.base_dir),
+        "input_characters_total": run.input_characters_total,
+        "input_characters_used": len(run.database_text),
+        "prompt_characters": len(run.prompt_text),
+        "request_timeout_seconds": run.settings.settings.request_timeout_seconds,
+        "response_available": response_available,
+        "error": error,
+    }
+    if run_record.provider == "ollama":
+        provenance["ollama_think"] = run.settings.settings.ollama_think
+        provenance["ollama_thinking_request"] = run.ollama_think_label
+        if run.settings.settings.ollama_output_format is not None:
+            provenance["ollama_output_constraint"] = run.ollama_output_constraint
+            provenance["ollama_runtime"] = {
+                "client_version": run.ollama_runtime.get("client_version"),
+                "server_version": run.ollama_runtime.get("server_version"),
+                "server_version_error": run.ollama_runtime.get("server_version_error"),
+                "model": run.ollama_runtime.get("models", {}).get(model),
+            }
+    if run_record.provider == "anthropic" and run.settings.settings.anthropic_output_format:
+        provenance["anthropic_output_constraint"] = run.anthropic_output_constraint
+    # ASCII escapes preserve all returned code points, including malformed surrogates.
+    write_text(
+        paths["raw"],
+        json.dumps(
+            {
+                "format_version": "extraction-raw-3.0",
+                **provenance,
+                "response_text": response_text,
+                "thinking_text": thinking_text,
+            },
+            indent=2,
+            ensure_ascii=True,
+        )
+        + "\n",
+    )
+    candidate_version = provenance["candidate_format_version"]
+    report = validate_response(response_text, run.database_text, expected_version=candidate_version)
+    accepted = response_available and status == "success" and report.evidence_valid
+    write_text(
+        paths["validation"],
+        json.dumps(
+            {
+                "format_version": "extraction-validation-3.0",
+                **provenance,
+                "raw_response_archive": paths["raw"].name,
+                **report.model_dump(),
+                "evidence_valid": report.evidence_valid,
+                "accepted": accepted,
+            },
+            indent=2,
+            ensure_ascii=True,
+        )
+        + "\n",
+    )
+    if accepted:
+        document_type = (
+            ExtractionDocumentV31 if candidate_version == "extraction-3.1" else ExtractionDocument
+        )
+        document = document_type(
+            format_version=candidate_version,
+            input=input_record,
+            run=run_record,
+            entries=report.entries,
+        )
+        write_text(
+            paths["document"],
+            json.dumps(document.model_dump(), indent=2, ensure_ascii=True) + "\n",
+        )
+    return report
 
 
 def log_path_for(run: RunContext, index: int, model: str) -> Path:
@@ -95,6 +342,21 @@ def summary_path_for(run: RunContext) -> Path:
     )
 
 
+def _provider_for_index(run: RunContext, index: int) -> str:
+    """Identify a selected model by its stable index, never its potentially shared label."""
+    position = index - run.index_base
+    return run.models[position].provider if 0 <= position < len(run.models) else "unknown"
+
+
+def _output_limit(run: RunContext, provider: str) -> str:
+    if provider == "ollama":
+        return str(run.run_options.get("num_predict", "Ollama default"))
+    limit = run.settings.settings.max_output_tokens
+    if limit is None and provider == "anthropic":
+        limit = DEFAULT_ANTHROPIC_OUTPUT_TOKENS
+    return str(limit) if limit is not None else "provider default"
+
+
 def build_output_markdown(
     run: RunContext,
     *,
@@ -104,6 +366,7 @@ def build_output_markdown(
     response_text: str,
     thinking_text: str,
     status: str = "success",
+    completion_reason: str | None = None,
 ) -> str:
     """Render one model answer, optionally preceded by a metadata comment."""
     parts: list[str] = []
@@ -113,6 +376,13 @@ def build_output_markdown(
                 [
                     "<!--",
                     f"model: {model}",
+                    f"provider: {_provider_for_index(run, index)}",
+                    *(
+                        [f"ollama_thinking_request: {run.ollama_think_label}"]
+                        if _provider_for_index(run, index) == "ollama"
+                        else []
+                    ),
+                    f"output_token_limit: {_output_limit(run, _provider_for_index(run, index))}",
                     f"model_index: {index}",
                     f"status: {status}",
                     f"run_id: {run.run_id}",
@@ -122,6 +392,10 @@ def build_output_markdown(
                     f"input_truncated: {'yes' if run.input_truncated else 'no'}",
                     f"prompt_characters: {len(run.prompt_text):,}",
                     f"prompt_fingerprint: {run.prompt_fingerprint}",
+                    f"prompt_path: {run.prompt_path}",
+                    f"prompt_version: {run.prompt_version}",
+                    f"prompt_template_sha256: {run.prompt_template_sha256}",
+                    f"completion_reason: {completion_reason or 'unknown'}",
                     f"generated_at: {finished_at.isoformat(timespec='seconds')}",
                     "-->",
                 ]
@@ -145,6 +419,7 @@ def write_output(
     response_text: str,
     thinking_text: str,
     status: str = "success",
+    completion_reason: str | None = None,
 ) -> Path:
     """Write the model answer and return the path it was written to."""
     path = output_path_for(run, index, model)
@@ -158,6 +433,7 @@ def write_output(
             response_text=response_text,
             thinking_text=thinking_text,
             status=status,
+            completion_reason=completion_reason,
         ),
     )
     return path
@@ -174,7 +450,9 @@ def _log_rows(run: RunContext, result: ModelRunResult) -> list[tuple[str, str]]:
     prompt_duration = metric("prompt_eval_duration_ns")
     generated_tokens = metric("eval_count")
     generation_duration = metric("eval_duration_ns")
-    overrun = run.context_overrun
+    provider = _provider_for_index(run, result.index)
+    is_ollama = provider == "ollama"
+    overrun = run.context_overrun if is_ollama else None
     estimated_generation = "n/a"
     if metrics is not None and metrics.eval_count is None and metrics.response_characters:
         estimated_generation = (
@@ -184,15 +462,21 @@ def _log_rows(run: RunContext, result: ModelRunResult) -> list[tuple[str, str]]:
     output_reference = (
         portable_path(result.output_path, run.settings.base_dir) if result.output_path else "n/a"
     )
-    return [
+    rows = [
         ("Status", result.status),
         ("Model", f"`{result.model}`"),
+        ("Provider", provider),
+        ("Output token limit", _output_limit(run, provider)),
+        ("Request timeout (seconds)", str(run.settings.settings.request_timeout_seconds)),
         ("Model index", str(result.index)),
         ("Run id", run.run_id),
-        ("Run mode", run.run_mode),
-        ("Keep alive", run.keep_alive_label),
-        ("Ollama options", f"`{format_options(run.run_options)}`"),
-        ("Ollama host", run.settings.ollama_host),
+        ("Run mode", run.run_mode if is_ollama else "sequential (cloud)"),
+        ("Keep alive", run.keep_alive_label if is_ollama else "n/a (Ollama only)"),
+        (
+            "Ollama options",
+            f"`{format_options(run.run_options)}`" if is_ollama else "n/a (Ollama only)",
+        ),
+        ("Ollama host", run.settings.ollama_host if is_ollama else "n/a (Ollama only)"),
         ("Started", result.started_at.isoformat(timespec="seconds")),
         ("Finished", result.finished_at.isoformat(timespec="seconds")),
         ("Wall-clock time", naming.format_seconds(metric("wall_clock_seconds"))),
@@ -214,18 +498,64 @@ def _log_rows(run: RunContext, result: ModelRunResult) -> list[tuple[str, str]]:
         ("Input truncated", "yes" if run.input_truncated else "no"),
         ("Prompt characters", naming.format_count(len(run.prompt_text))),
         ("Prompt fingerprint", run.prompt_fingerprint),
+        ("Prompt path", run.prompt_path),
+        ("Prompt version", run.prompt_version),
+        ("Prompt template SHA-256", run.prompt_template_sha256),
         ("Estimated prompt tokens", naming.format_count(run.estimated_prompt_tokens)),
-        ("num_ctx", naming.format_count(run.num_ctx)),
-        ("Data budget", f"{run.data_budget_characters:,} characters"),
-        ("Input fits budget", "yes" if run.input_fits else "no"),
+        ("num_ctx", naming.format_count(run.num_ctx) if is_ollama else "n/a (Ollama only)"),
+        (
+            "Data budget",
+            f"{run.data_budget_characters:,} characters" if is_ollama else "n/a (Ollama only)",
+        ),
+        (
+            "Input fits budget",
+            ("yes" if run.input_fits else "no") if is_ollama else "n/a (Ollama only)",
+        ),
         (
             "Context overrun",
-            f"yes (about {overrun[0]:,} tokens vs {overrun[1]:,} available)" if overrun else "no",
+            (f"yes (about {overrun[0]:,} tokens vs {overrun[1]:,} available)" if overrun else "no")
+            if is_ollama
+            else "n/a (Ollama only)",
         ),
         ("Response characters", naming.format_count(metric("response_characters"))),
         ("Thinking characters", naming.format_count(metric("thinking_characters"))),
         ("Output file", f"`{output_reference}`"),
     ]
+    if run.settings.settings.extraction_format == "v3":
+        paths = v3_artifact_paths(run, result.index, result.model)
+        rows.extend(
+            [
+                ("Extraction format", "v3"),
+                ("Raw response", f"`{portable_path(paths['raw'], run.settings.base_dir)}`"),
+                (
+                    "Validation report",
+                    f"`{portable_path(paths['validation'], run.settings.base_dir)}`",
+                ),
+            ]
+        )
+    if is_ollama:
+        rows.append(("Ollama thinking request", run.ollama_think_label))
+        if run.settings.settings.ollama_output_format is not None:
+            constraint = run.ollama_output_constraint
+            rows.extend(
+                [
+                    ("Ollama output constraint", constraint["mode"]),
+                    ("Candidate schema", constraint["schema_identity"]),
+                    ("Candidate schema SHA-256", constraint["schema_sha256"]),
+                    ("Ollama runtime", json.dumps(run.ollama_runtime, sort_keys=True)),
+                ]
+            )
+    if provider == "anthropic" and run.settings.settings.anthropic_output_format:
+        constraint = run.anthropic_output_constraint
+        rows.extend(
+            [
+                ("Anthropic output constraint", constraint["mode"]),
+                ("Candidate schema", constraint["schema_identity"]),
+                ("Candidate schema SHA-256", constraint["schema_sha256"]),
+                ("Anthropic SDK version", constraint["sdk_version"]),
+            ]
+        )
+    return rows
 
 
 def build_log_markdown(
@@ -292,9 +622,7 @@ def build_summary_markdown(
     include_title: bool = True,
 ) -> str:
     """Render the cross-model comparison table."""
-    interrupted = any(
-        result.metrics is not None and result.metrics.interrupted for result in results
-    )
+    interrupted = any(result.status == "interrupted" for result in results)
     looped = [
         result.model
         for result in results
@@ -312,10 +640,26 @@ def build_summary_markdown(
         f"- Input used: {len(run.database_text):,} characters"
         f" (truncated: {'yes' if run.input_truncated else 'no'})",
         f"- Prompt: {len(run.prompt_text):,} characters, fingerprint `{run.prompt_fingerprint}`",
-        f"- Context window: num_ctx {run.num_ctx:,}"
-        f" (estimated prompt tokens {run.estimated_prompt_tokens:,})",
-        f"- Data budget: {run.data_budget_characters:,} characters"
-        f" (fits: {'yes' if run.input_fits else 'NO - the model saw only the tail'})",
+        f"- Prompt path: `{run.prompt_path}`",
+        f"- Prompt version: `{run.prompt_version}`",
+        "- Output token limits: "
+        + ", ".join(
+            f"{provider}={_output_limit(run, provider)}"
+            for provider in dict.fromkeys(model.provider for model in run.models)
+        ),
+        f"- Prompt template SHA-256: `{run.prompt_template_sha256}`",
+        (
+            f"- Context window: num_ctx {run.num_ctx:,} (Ollama only)"
+            if any(m.provider == "ollama" for m in run.models)
+            else "- Context window: provider-specific; Ollama budget not applicable"
+        ),
+        (
+            f"- Data budget: {run.data_budget_characters:,} characters (Ollama only)"
+            f" (fits: {'yes' if run.input_fits else 'NO - estimated overrun'})"
+            if any(m.provider == "ollama" for m in run.models)
+            else "- Data budget: n/a (Ollama only)"
+        ),
+        "- Execution: Ollama group first, then OpenAI, Anthropic, Gemini; cloud jobs sequential",
         f"- Loop guard: {'on' if run.settings.settings.loop_guard else 'off'}"
         f" (threshold {run.settings.settings.loop_guard_repeats} repeats)",
         f"- Run ended: {ended}",
@@ -325,7 +669,30 @@ def build_summary_markdown(
     if looped:
         names = ", ".join(f"`{name}`" for name in looped)
         detail_lines.append(f"- Loop guard stopped: {names} (partial answers saved)")
+    if any(model.provider == "ollama" for model in run.models):
+        detail_lines.append(f"- Ollama thinking request: {run.ollama_think_label}")
+        if run.settings.settings.ollama_output_format is not None:
+            constraint = run.ollama_output_constraint
+            detail_lines.extend(
+                [
+                    f"- Ollama output constraint: {constraint['mode']}",
+                    f"- Candidate schema: {constraint['schema_identity']}",
+                    f"- Candidate schema SHA-256: {constraint['schema_sha256']}",
+                    f"- Ollama runtime: `{json.dumps(run.ollama_runtime, sort_keys=True)}`",
+                ]
+            )
     details = "\n".join(detail_lines)
+    if (
+        any(model.provider == "anthropic" for model in run.models)
+        and run.settings.settings.anthropic_output_format
+    ):
+        constraint = run.anthropic_output_constraint
+        details += (
+            f"\n- Anthropic output constraint: {constraint['mode']}"
+            f"\n- Candidate schema: {constraint['schema_identity']}"
+            f"\n- Candidate schema SHA-256: {constraint['schema_sha256']}"
+            f"\n- Anthropic SDK version: {constraint['sdk_version']}"
+        )
     table = "\n".join(
         [
             "| " + " | ".join(SUMMARY_COLUMNS) + " |",

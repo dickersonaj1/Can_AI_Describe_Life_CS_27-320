@@ -19,6 +19,7 @@ from .schema import (
     CandidateRelationship,
     DictionaryProposal,
     InputBundle,
+    Issue,
     StrictModel,
     SynthesisRun,
 )
@@ -231,7 +232,18 @@ def validate_job(archive, contract, check):
     return candidate, report(issues)
 
 
-def run_job(root, config, stage, payload, contract, check, *, client=None, retry_failed=False):
+def run_job(
+    root,
+    config,
+    stage,
+    payload,
+    contract,
+    check,
+    *,
+    client=None,
+    retry_failed=False,
+    correction_request=None,
+):
     request = dict(
         model=config["model"],
         instructions=config["prompts"][stage],
@@ -250,6 +262,14 @@ def run_job(root, config, stage, payload, contract, check, *, client=None, retry
     key = fingerprint(dict(version=VERSION, input_sha256=config["input_sha256"], request=request))
     folder = root / "jobs" / stage / key
     expected = dict(version=VERSION, input_sha256=config["input_sha256"], request=request)
+    from .corrections import reuse, save
+
+    if correction_request is not None and correction_request["attempt"].parent == folder:
+        save(root, folder, expected, config, contract, check, correction_request)
+    corrected = reuse(root, folder, expected, config, contract, check)
+    if corrected is not None:
+        candidate, saved = corrected
+        return candidate, key, saved
     attempts = sorted(folder.glob("attempt_*"))
     last = None
     for attempt in attempts:
@@ -479,7 +499,7 @@ def execute(root, *, client=None, retry_failed=False):
         return _execute(root, client=client, retry_failed=retry_failed)
 
 
-def _execute(root, *, client=None, retry_failed=False):
+def _execute(root, *, client=None, retry_failed=False, correction_request=None):
     """Reconstruct deterministically; client=None is strictly offline."""
     bundle, config = read_run(root)
     aliases = config["aliases"]
@@ -488,9 +508,14 @@ def _execute(root, *, client=None, retry_failed=False):
         terms=[], relationships=[], observation_dispositions=[], review_notes=[]
     )
     completed, coverage = [], []
+    corrections = []
     usage = dict(input_tokens=0, output_tokens=0)
 
     def record(stage, key, saved, comparisons=None):
+        if "_correction" in saved:
+            corrections.append(
+                dict(stage=stage, job_id=key, warning_code="OFFLINE_EDIT", **saved["_correction"])
+            )
         completed.append(dict(stage=stage, job_id=key))
         if comparisons is not None:
             coverage.append(dict(stage=stage, job_id=key, comparisons=comparisons))
@@ -523,6 +548,7 @@ def _execute(root, *, client=None, retry_failed=False):
                 check,
                 client=client,
                 retry_failed=retry_failed,
+                correction_request=correction_request,
             )
         except JobFailure as exc:
             if not str(exc).startswith("SPLIT:"):
@@ -572,6 +598,7 @@ def _execute(root, *, client=None, retry_failed=False):
                 scoped_check,
                 client=client,
                 retry_failed=retry_failed,
+                correction_request=correction_request,
             )
         except JobFailure as exc:
             if not str(exc).startswith("SPLIT:"):
@@ -673,6 +700,16 @@ def _execute(root, *, client=None, retry_failed=False):
             "unexamined pairs may contain biological links."
         )
     issues = validate_proposal(proposal, bundle)
+    issues.extend(
+        Issue(
+            severity="warning",
+            code="OFFLINE_EDIT",
+            path="/synthesis_run/corrections",
+            message=f"Manually approved {c['stage']}/{c['job_id']} correction "
+            f"{c['correction_id']}: {c['reason']}",
+        )
+        for c in corrections
+    )
     validation = report([i.model_dump() for i in issues])
     # Usage includes failures, superseded attempts and incomplete parent batches.
     for path in sorted((root / "jobs").rglob("response.json")):
@@ -706,4 +743,6 @@ def _execute(root, *, client=None, retry_failed=False):
         usage_all_archived_attempts=usage,
         dictionary_sha256=fingerprint(result) if result is not None else None,
     )
+    if corrections:
+        summary["corrections"] = corrections
     return result, validation, summary

@@ -53,10 +53,50 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--replay", type=Path, help="Revalidate an archived response entirely offline"
     )
-    parser.add_argument("--candidate", type=Path, help="With --replay, use an edited proposal JSON")
+    parser.add_argument("--candidate", type=Path, help="Edited JSON for --replay or --correct-job")
+    parser.add_argument(
+        "--correct-job", type=Path, help="Offline correction: archived attempt directory"
+    )
+    parser.add_argument("--correction-reason", help="Required explanation of a manual correction")
+    parser.add_argument(
+        "--approve-correction",
+        action="store_true",
+        help="Explicitly record manual approval of the supplied correction",
+    )
     args = parser.parse_args(argv)
     archive_dir = None
     try:
+        if args.correct_job:
+            if not args.candidate or not args.correction_reason or not args.approve_correction:
+                raise ValueError(
+                    "--correct-job requires --candidate, --correction-reason "
+                    "and --approve-correction"
+                )
+            if (
+                args.replay
+                or args.resume
+                or args.replay_run
+                or args.run_dir
+                or args.single_request
+                or args.retry_failed
+                or args.dry_run
+                or args.overwrite
+            ):
+                raise ValueError("--correct-job is a standalone offline approval command")
+            from feature_dictionary.synthesis_core.corrections import approve_job
+
+            artifact, path = approve_job(args.correct_job, args.candidate, args.correction_reason)
+            print(f"Correction artifact: {path}")
+            for issue in artifact["validation"]["issues"]:
+                print(f"{issue['code']} at {issue['path']}: {issue['message']}")
+            print(
+                "Correction accepted; no API request made."
+                if artifact["accepted"]
+                else "Correction rejected; original response and errors preserved."
+            )
+            return 0 if artifact["accepted"] else 2
+        if args.correction_reason or args.approve_correction:
+            raise ValueError("Correction approval flags require --correct-job")
         if args.max_output_tokens <= 0:
             raise ValueError("--max-output-tokens must be positive")
         if args.replay and (args.resume or args.replay_run or args.run_dir):

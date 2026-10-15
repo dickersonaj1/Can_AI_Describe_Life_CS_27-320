@@ -1,0 +1,24 @@
+{
+  "format_version": "anatomical-reference-1.0",
+  "advisor_approved": false,
+  "reference_version": "acanthophis-provisional-1.0",
+  "scope": "Exact observed expressions only; provisional expectations pending VCU Life Sciences review. Case/plural variants are not merged. Negative indexing expectations do not require deleting observations.",
+  "expectations": [
+    {"text": "anal", "role": "primary"},
+    {"text": "anal entire", "role": "contextual", "owner": "anal"},
+    {"text": "tail", "role": "primary"},
+    {"text": "spine", "role": "primary"},
+    {"text": "tail spine", "role": "compound", "associated_primaries": ["tail", "spine"]},
+    {"text": "tail tip", "role": "compound"},
+    {"text": "distal", "role": "not_indexed"},
+    {"text": "dark cross-bands", "role": "not_indexed"},
+    {"text": "Total length", "role": "not_indexed"},
+    {"text": "Maddock et al. 2015", "role": "not_indexed", "disposition": "excluded"}
+  ],
+  "review_questions": [
+    "Are tail and spine both established primary anchors for tail spine in this context?",
+    "Does upper labials name an anatomical subtype? No automatic grammatical decision.",
+    "Are exclusions appropriate, rather than merely successful non-indexing?",
+    "Are local attachments biologically justified, even when evidence matches?"
+  ]
+}

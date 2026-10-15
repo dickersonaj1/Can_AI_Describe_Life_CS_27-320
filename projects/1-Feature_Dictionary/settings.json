@@ -9,9 +9,17 @@
       "model": "gpt-5.4-nano"
     }
   ],
+  "model_aliases": {
+    "gpt": {"provider": "openai", "model": "gpt-5.4-nano"},
+    "claude": {"provider": "anthropic", "model": "claude-sonnet-4-5-20250929"},
+    "gemini": {"provider": "gemini", "model": "gemini-3.8-flash"},
+    "qwen": {"provider": "ollama", "model": "qwen3:8b"},
+    "deepseek": {"provider": "ollama", "model": "deepseek-r1:8b"},
+    "llama": {"provider": "ollama", "model": "llama3.1:8b"}
+  },
   "options": {
     "temperature": 0.2,
-    "num_ctx": 6144,
+    "num_ctx": 16384,
     "seed": 42
   },
   "output_dir": "extractor_outputs",
@@ -30,7 +38,7 @@
   "prompt_placeholder": "{species_database}",
   "max_input_characters": null,
   "fail_on_context_overrun": true,
-  "max_output_tokens": 1200,
+  "max_output_tokens": 4096,
   "loop_guard": true,
   "loop_guard_repeats": 25
 }

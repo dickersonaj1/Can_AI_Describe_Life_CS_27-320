@@ -1,0 +1,88 @@
+{
+  "format_version": "synthesis-1.0",
+  "input_sha256": "88b1ee1eee82623888767b0148f11272f5fb2108a0e55f68ba7f236b2d22daec",
+  "anatomical_nouns": [
+    {
+      "id": "t1",
+      "text": "anal",
+      "observation_ids": [
+        "o1"
+      ],
+      "review_status": "proposed",
+      "review_note": null,
+      "compound_ids": [
+        "c1"
+      ]
+    },
+    {
+      "id": "t2",
+      "text": "tail",
+      "observation_ids": [
+        "o4"
+      ],
+      "review_status": "proposed",
+      "review_note": null,
+      "compound_ids": [
+        "c2"
+      ]
+    }
+  ],
+  "compound_terms": [
+    {
+      "id": "c1",
+      "text": "anal entire",
+      "observation_ids": [
+        "o3"
+      ],
+      "review_status": "proposed",
+      "review_note": null,
+      "parent_ids": [
+        "t1"
+      ],
+      "subterm_ids": [
+        "s1"
+      ],
+      "relationship_status": "proposed",
+      "relationship_note": null
+    },
+    {
+      "id": "c2",
+      "text": "tail spine",
+      "observation_ids": [
+        "o6"
+      ],
+      "review_status": "proposed",
+      "review_note": null,
+      "parent_ids": [
+        "t2"
+      ],
+      "subterm_ids": [
+        "s2"
+      ],
+      "relationship_status": "proposed",
+      "relationship_note": null
+    }
+  ],
+  "subterms": [
+    {
+      "id": "s1",
+      "text": "entire",
+      "observation_ids": [
+        "o2"
+      ],
+      "review_status": "proposed",
+      "review_note": null,
+      "type": "morphological_descriptor"
+    },
+    {
+      "id": "s2",
+      "text": "spine",
+      "observation_ids": [
+        "o5"
+      ],
+      "review_status": "proposed",
+      "review_note": null,
+      "type": "supporting_noun"
+    }
+  ]
+}

@@ -317,9 +317,94 @@ python -m feature_dictionary.synthesis --resume synthesis_outputs/small_live_run
 Add `--retry-failed` only when you want to permit another paid attempt for an archived failed
 or unknown-outcome job. Successful jobs are still reused. If a dictionary was already published,
 choose a new output filename or explicitly use `--overwrite`; old output and sidecar bytes
-are backed up first. Staged `--candidate` editing is not supported; legacy correction replay
-remains available for legacy response archives. Never edit raw archived responses in place.
+are backed up first. Staged offline corrections are supported through `--correct-job` (below); legacy correction
+replay remains available for legacy response archives. Never edit raw archived responses in place.
 
 ```bash
 python -m pytest tests/test_synthesis.py tests/test_synthesis_batching.py
+```
+
+
+## Offline corrections for individual staged jobs
+
+Use the failed attempt's `response.json` `output_text` as the starting candidate, and save
+edits into a separate JSON file. Use local observation aliases and concept refs from that
+request, not final dictionary IDs. Keep original extraction observations unchanged. For a
+relationship type mismatch, omitting an unsupported edge pending biological review is safer
+than changing a concept type merely to satisfy the validator.
+
+Approve and validate a correction entirely offline:
+
+```bash
+python -m feature_dictionary.synthesis \
+  --correct-job RUN/jobs/local/JOB_HASH/attempt_0001 \
+  --candidate corrected_candidate.json \
+  --correction-reason "Omit invalid relationship claims pending biological review" \
+  --approve-correction
+```
+
+`--correct-job` takes an **attempt directory**, not its response file. The run root is inferred
+from that directory. This is a standalone command; do not combine it with `--resume`,
+`--replay-run`, `--dry-run` or `--retry-failed`. It never creates an API client. It reconstructs
+preceding accepted jobs offline to reach the selected job's existing validator, applies exactly
+that validator (including batch ownership and all original integrity safeguards), then stops.
+If an earlier job is still blocked, correct it first. The same command supports local,
+reconciliation and relationship-review jobs, including deterministically subdivided jobs.
+
+The reason must be nonempty, and `--approve-correction` explicitly records the user's manual
+approval. Validation determines acceptance: an approved but invalid candidate is **rejected**,
+saved for diagnosis, and never reused. Return code 0 means accepted; 2 means rejected or a
+configuration error. No published dictionary is written by the correction command.
+
+Each artifact is exclusively created as:
+
+```text
+RUN/jobs/STAGE/JOB_HASH/corrections/<content-hash>.json
+    version: job-correction-1
+    binding: attempt path, original request byte hash, original response byte hash,
+             master input fingerprint, frozen plan fingerprint
+    candidate_text, candidate_sha256
+    reason, manually_approved: true
+    accepted: true | false
+    validation: structured deterministic report
+```
+
+Original request, response, failed validation report and extraction observations are never
+rewritten. Exact candidate text is stored, including malformed JSON when rejected. Artifacts
+have content-addressed names and exclusive creation; changes are detected during reuse.
+These checks establish archive integrity, not a cryptographic identity for the person approving.
+One accepted correction per job is supported. Repeating identical approval is idempotent;
+conflicting approvals stop explicitly. Superseding an accepted edit is intentionally outside
+this small workflow; retain it and start a separately tracked experiment if needed.
+
+After acceptance, use the normal resume command:
+
+```bash
+python -m feature_dictionary.synthesis --resume RUN --output synthesis_outputs/resumed.json
+```
+
+The corrected job and earlier successful jobs do not make additional requests. Remaining
+unfinished jobs can incur charges. Do not add `--retry-failed` for an accepted correction.
+If later jobs already exist and their input context changed, their fingerprints change, so
+new inference may be required for those dependent jobs; unrelated matching jobs remain reusable.
+
+For a run with all remaining responses archived, reconstruct entirely offline:
+
+```bash
+python -m feature_dictionary.synthesis --replay-run RUN --output synthesis_outputs/replayed.json
+```
+
+An incomplete run stops at the next missing job during offline replay; it never requests it.
+Every accepted edit is checked against the original request/response/input/plan hashes and
+revalidated on every resume/replay. Invalidated or mismatched edits block progress even if
+`--retry-failed` is present, rather than silently requesting another paid response.
+
+The final dictionary and validation report include `OFFLINE_EDIT` warnings. The run summary
+contains a `corrections` collection with artifact IDs/paths, reasons, explicit manual approval,
+original request/response bindings and candidate hashes. Existing v2 dictionary fields are
+unchanged. A correction remains a manual editorial decision; biological relationships still
+have `status: proposed` and `basis: model_inference`. Manual approval does not verify biology.
+
+```bash
+python -m pytest tests/test_synthesis_corrections.py
 ```

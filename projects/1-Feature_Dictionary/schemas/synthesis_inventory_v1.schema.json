@@ -1,0 +1,261 @@
+{
+  "$defs": {
+    "AnatomicalNoun": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "observation_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "review_status": {
+          "default": "proposed",
+          "enum": [
+            "proposed",
+            "reviewed"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "review_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Note"
+        },
+        "compound_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Compound Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "observation_ids",
+        "compound_ids"
+      ],
+      "title": "AnatomicalNoun",
+      "type": "object"
+    },
+    "CompoundTerm": {
+      "additionalProperties": false,
+      "description": "Parent IDs organize dictionary presentation, never anatomical containment.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "observation_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "review_status": {
+          "default": "proposed",
+          "enum": [
+            "proposed",
+            "reviewed"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "review_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Note"
+        },
+        "parent_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Parent Ids",
+          "type": "array"
+        },
+        "subterm_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Subterm Ids",
+          "type": "array"
+        },
+        "relationship_status": {
+          "default": "proposed",
+          "enum": [
+            "proposed",
+            "reviewed"
+          ],
+          "title": "Relationship Status",
+          "type": "string"
+        },
+        "relationship_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relationship Note"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "observation_ids",
+        "parent_ids",
+        "subterm_ids"
+      ],
+      "title": "CompoundTerm",
+      "type": "object"
+    },
+    "Subterm": {
+      "additionalProperties": false,
+      "description": "Reusable supporting vocabulary, including standalone morphological descriptors.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "observation_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "review_status": {
+          "default": "proposed",
+          "enum": [
+            "proposed",
+            "reviewed"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "review_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Note"
+        },
+        "type": {
+          "enum": [
+            "morphological_descriptor",
+            "anatomical_modifier",
+            "supporting_noun",
+            "unresolved"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "observation_ids",
+        "type"
+      ],
+      "title": "Subterm",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {
+      "const": "synthesis-1.0",
+      "title": "Format Version",
+      "type": "string"
+    },
+    "input_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Sha256",
+      "type": "string"
+    },
+    "anatomical_nouns": {
+      "items": {
+        "$ref": "#/$defs/AnatomicalNoun"
+      },
+      "title": "Anatomical Nouns",
+      "type": "array"
+    },
+    "compound_terms": {
+      "items": {
+        "$ref": "#/$defs/CompoundTerm"
+      },
+      "title": "Compound Terms",
+      "type": "array"
+    },
+    "subterms": {
+      "items": {
+        "$ref": "#/$defs/Subterm"
+      },
+      "title": "Subterms",
+      "type": "array"
+    }
+  },
+  "required": [
+    "format_version",
+    "input_sha256",
+    "anatomical_nouns",
+    "compound_terms",
+    "subterms"
+  ],
+  "title": "Inventory",
+  "type": "object"
+}

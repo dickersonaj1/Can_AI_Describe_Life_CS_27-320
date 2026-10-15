@@ -7,6 +7,7 @@ from collections import Counter, deque
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any
 
@@ -144,11 +145,12 @@ class ModelMetrics:
 
 @dataclass
 class GenerationOutcome:
-    """The text and metrics returned by one successful generation."""
+    """The text, metrics and completion status returned by one generation."""
 
     response_text: str
     thinking_text: str
     metrics: ModelMetrics
+    completion_status: str = "success"
 
 
 @dataclass
@@ -182,7 +184,9 @@ def create_client(context: RunContext) -> ollama.Client:
     )
 
 
-def list_installed_models(client: ollama.Client) -> set[str]:
+def list_installed_models(
+    client: ollama.Client, *, runtime_metadata: dict[str, Any] | None = None
+) -> set[str]:
     """Return the identifiers of the models that are available locally."""
     try:
         response = client.list()
@@ -191,12 +195,37 @@ def list_installed_models(client: ollama.Client) -> set[str]:
     except ollama.ResponseError as exc:
         raise OllamaUnavailableError(str(exc)) from exc
 
+    if runtime_metadata is not None:
+        runtime_metadata.update(client_version=version("ollama"), server_version=None, models={})
+        try:
+            # SDK 0.6.2 has no public version() wrapper; reuse its transport for
+            # this read-only endpoint, with a short metadata-only timeout.
+            server = client._request_raw("GET", "/api/version", timeout=5).json()
+            server_version = server.get("version")
+            if not isinstance(server_version, str) or not server_version:
+                raise ValueError("Ollama version metadata is missing")
+            runtime_metadata["server_version"] = server_version
+        except Exception as exc:
+            # Metadata failure must not trigger a retry or prevent generation.
+            runtime_metadata["server_version_error"] = type(exc).__name__
+
     names: set[str] = set()
     for model in getattr(response, "models", None) or []:
         for attribute in ("model", "name"):
             value = getattr(model, attribute, None)
             if isinstance(value, str) and value:
                 names.add(value)
+                if runtime_metadata is not None:
+                    details = getattr(model, "details", None)
+                    runtime_metadata["models"][value] = {
+                        "digest": getattr(model, "digest", None),
+                        "modified_at": (
+                            str(model.modified_at) if getattr(model, "modified_at", None) else None
+                        ),
+                        "details": details.model_dump(mode="json")
+                        if hasattr(details, "model_dump")
+                        else None,
+                    }
 
     return names
 
@@ -212,6 +241,9 @@ def run_model(
     on_chunk: OnChunk | None = None,
     loop_guard: bool = False,
     loop_guard_repeats: int = DEFAULT_LOOP_GUARD_REPEATS,
+    think: bool | None = None,
+    output_schema: dict[str, Any] | None = None,
+    on_response: Callable[[Any], None] | None = None,
 ) -> GenerationOutcome:
     """Send one prompt to one model and collect the answer plus its metrics.
 
@@ -220,12 +252,20 @@ def run_model(
     converted into :class:`GenerationInterrupted`, which still carries the text that
     arrived before the interrupt. With ``loop_guard`` enabled, a generation that
     starts repeating the same lines is stopped early and flagged on the metrics.
+    ``think`` is a top-level Ollama request parameter, omitted when unspecified.
+    Unsupported explicit modes are reported as errors without automatic retries.
+    ``output_schema`` is passed unchanged as Ollama's top-level ``format``;
+    omitted constraints preserve historical generation and parsing behavior.
     """
 
     request: dict[str, Any] = {
         "keep_alive": keep_alive,
         "options": options or None,
     }
+    if think is not None:
+        request["think"] = think
+    if output_schema is not None:
+        request["format"] = output_schema
 
     detector = RepeatDetector(loop_guard_repeats) if loop_guard else None
     started = time.perf_counter()
@@ -236,13 +276,11 @@ def run_model(
     interrupted = False
 
     if stream:
+        chunks = client.generate(model=model, prompt=prompt, stream=True, **request)
         try:
-            for chunk in client.generate(
-                model=model,
-                prompt=prompt,
-                stream=True,
-                **request,
-            ):
+            for chunk in chunks:
+                if on_response is not None:
+                    on_response(chunk)
                 piece = getattr(chunk, "response", "") or ""
                 reasoning = getattr(chunk, "thinking", "") or ""
 
@@ -261,6 +299,10 @@ def run_model(
 
         except KeyboardInterrupt:
             interrupted = True
+        finally:
+            close = getattr(chunks, "close", None)
+            if close is not None:
+                close()
 
         response_text = "".join(response_pieces)
         thinking_text = "".join(thinking_pieces)
@@ -272,6 +314,8 @@ def run_model(
             stream=False,
             **request,
         )
+        if on_response is not None:
+            on_response(final)
 
         response_text = getattr(final, "response", "") or ""
         thinking_text = getattr(final, "thinking", "") or ""
@@ -291,10 +335,20 @@ def run_model(
         loop_detected=loop_detected,
     )
 
+    if interrupted:
+        completion_status = "interrupted"
+    elif loop_detected:
+        completion_status = "loop_detected"
+    elif metrics.done_reason == "length" or getattr(final, "done", None) is False:
+        completion_status = "incomplete"
+    else:
+        completion_status = "success" if response_text.strip() else "empty"
+
     outcome = GenerationOutcome(
         response_text=response_text,
         thinking_text=thinking_text,
         metrics=metrics,
+        completion_status=completion_status,
     )
 
     if interrupted:

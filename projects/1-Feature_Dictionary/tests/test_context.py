@@ -36,7 +36,7 @@ def build_loaded(tmp_path: Path, **overrides) -> LoadedSettings:
 def test_placeholder_receives_the_database_text(tmp_path):
     context = RunContext.from_settings(build_loaded(tmp_path), DATABASE, started_at=STARTED)
     assert context.prompt_text == "Describe species text"
-    assert context.run_id == "2026-09-18T14:03:11"
+    assert context.run_id.startswith("2026-09-18T14:03:11.000000_")
     assert context.input_characters_total == len(DATABASE)
     assert context.input_truncated is False
 

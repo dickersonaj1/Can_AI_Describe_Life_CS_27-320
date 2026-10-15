@@ -1,0 +1,52 @@
+{
+  "$defs": {
+    "CandidateEntryV31": {
+      "additionalProperties": false,
+      "description": "V3.1 asks only for quotations and optional unverified annotations.",
+      "properties": {
+        "matched_text": {
+          "minLength": 1,
+          "title": "Matched Text",
+          "type": "string"
+        },
+        "source_phrase": {
+          "minLength": 1,
+          "title": "Source Phrase",
+          "type": "string"
+        },
+        "proposed_annotations": {
+          "default": null,
+          "description": "Optional unverified language/form suggestions; malformed values yield warnings.",
+          "title": "Proposed Annotations"
+        }
+      },
+      "required": [
+        "matched_text",
+        "source_phrase"
+      ],
+      "title": "CandidateEntryV31",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {
+      "const": "extraction-3.1",
+      "title": "Format Version",
+      "type": "string"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/CandidateEntryV31"
+      },
+      "title": "Entries",
+      "type": "array"
+    }
+  },
+  "required": [
+    "format_version",
+    "entries"
+  ],
+  "title": "CandidateResponseV31",
+  "type": "object"
+}

@@ -263,3 +263,35 @@ def test_interrupt_during_streaming_keeps_the_partial_answer():
     assert outcome.metrics.response_characters == len("Partial answer")
     assert outcome.metrics.estimated_generation_tokens == round(len("Partial answer") / 4)
     assert outcome.metrics.total_tokens is None
+
+
+@pytest.mark.parametrize(
+    "response,status",
+    [
+        (make_response(done_reason="length"), "incomplete"),
+        (make_response(done=False), "incomplete"),
+        (make_response(response=""), "empty"),
+        (make_response(), "success"),
+    ],
+)
+def test_ollama_completion_status_matches_shared_contract(response, status):
+    outcome = runner.run_model(FakeClient(response=response), model="m", prompt="p")
+    assert outcome.completion_status == status
+
+
+def test_ollama_stream_closed_after_loop_guard_break():
+    closed = []
+
+    def chunks():
+        try:
+            for _ in range(20):
+                yield make_chunk("repeated morphological terminology\n")
+        finally:
+            closed.append(True)
+
+    client = SimpleNamespace(generate=lambda **kwargs: chunks())
+    outcome = runner.run_model(
+        client, model="m", prompt="p", stream=True, loop_guard=True, loop_guard_repeats=2
+    )
+    assert outcome.completion_status == "loop_detected"
+    assert closed == [True]

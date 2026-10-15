@@ -1,7 +1,105 @@
-# Feature Dictionary — Local Ollama Extractor
+# Feature Dictionary — extraction → synthesis → review
 
-Send one chunk of text (`species_database.txt`) plus a customizable prompt to **N locally
-running Ollama models**, and keep every answer, timing and token count inside this project.
+**New team members:** start with the [user manual](docs/USER_MANUAL.md) and
+[GitHub handoff notes](docs/GITHUB_HANDOFF.md). The existing synthetic fixture is
+a complete, no-cost example; it needs no credentials, Ollama server, or private
+experiment archives. From this project directory after installation:
+
+```sh
+python -m feature_dictionary.modular_synthesis --replay-job tests/fixtures/synthesis_v12_run/job_000
+python -m feature_dictionary.inventory_workflow --render-job tests/fixtures/synthesis_v12_run/job_000 --output-dir review_outputs/first_offline_01 --reference-fixture tests/fixtures/reference/acanthophis_inventory_v1.json
+```
+
+Choose a fresh export destination on repeat runs. The research baseline uses explicit
+extraction v3.1.4 / synthesis v1.2.4 prompts; defaults and historical examples below
+remain unchanged. See the handoff notes for the proposed Git file list and verified
+dependency constraints.
+
+Use **`python -m feature_dictionary.inventory_workflow`** as the primary entry point.
+It coordinates extraction, independent synthesis proposals, validation, and review exports.
+Results require scientific review; this workflow does not compile a final dictionary.
+
+Run commands from the Feature Dictionary project root after following the manual’s
+installation and guarded sample-default-input steps. Use the activated environment’s `python`.
+Always choose a fresh output directory. Cloud execution may incur charges; the execution
+commands below require approval before running.
+
+### Preview (no model calls or output files)
+
+```sh
+python -m feature_dictionary.inventory_workflow \
+  --source tests/fixtures/acanthophis_antarcticus_real.txt \
+  --extractor-models qwen,gemini --synthesis-models claude \
+  --extraction-prompt prompts/extraction_v3_1_4.txt \
+  --synthesis-prompt prompts/synthesis_inventory_v1_2_4.txt \
+  --ollama-think false --extraction-tokens 8192 --synthesis-tokens 16384 \
+  --output-dir workflow_outputs/demo_01 --dry-run
+```
+
+### Full execution (after approval)
+
+Run the preview command above with `--dry-run` removed. It uses extraction prompt
+`extraction_v3_1_4.txt`, synthesis prompt `synthesis_inventory_v1_2_4.txt`, extraction
+contract 3.1, synthesis contract 1.2, and short observation references. Explicit model
+choices are required; aliases resolve through `settings.json`.
+
+### Reuse accepted extraction (local archive example; preview first)
+
+These historical extraction directories are excluded from Git. Obtain the complete
+archive bundle separately or substitute accepted extraction from your own run.
+
+```sh
+python -m feature_dictionary.inventory_workflow \
+  --reuse-extraction extractor_outputs/v314_gemini_8192_01 \
+  --reuse-extraction extractor_outputs/v314_qwen_ctx16384_01 \
+  --synthesis-models claude --synthesis-tokens 16384 \
+  --synthesis-prompt prompts/synthesis_inventory_v1_2_4.txt \
+  --output-dir workflow_outputs/reuse_demo_01 --dry-run
+```
+
+After approval, remove `--dry-run` to generate synthesis only. Failed or interrupted
+runs remain intact; there is no automatic retry or in-place workflow resume.
+
+### Export a historical Claude proposal (separate archive required)
+
+```sh
+python -m feature_dictionary.inventory_workflow \
+  --render-job synthesis_outputs/acanthophis_v12_short_claude_01/job_000 \
+  --reference-fixture tests/fixtures/reference/acanthophis_inventory_v1.json \
+  --output-dir review_outputs/meeting_demo_01
+```
+
+The example above requires a separately supplied local archive; use the synthetic
+fixture at the top of this README for the fresh-clone offline exercise.
+
+Open `proposal_000/terminology_inventory.md`, `scientific_review.md`, and
+`semantic_evaluation.json` in that destination. JSON exports retain the evidence and
+provenance. Reference expectations are provisional, not advisor approval. Term-label,
+owner, and primary-association comparisons ignore case; evidence checks remain exact.
+Existing exports are historical snapshots and are not updated automatically.
+
+See [workflow details](docs/inventory-workflow.md) and the short
+[controlled model-comparison procedure](docs/model-comparison.md).
+Preserve all experiment archives, prompts, schemas, fixtures, tests, and examples in place.
+
+---
+
+## Extraction-only and compatibility reference
+
+The following reference documents the underlying extractor and older entry points.
+`extractor.py`, `python -m feature_dictionary`, and the installed `feature-dictionary`
+command run extraction only. Their defaults differ from the combined workflow:
+`settings.json` selects extraction v2 and a cloud model in the handoff snapshot.
+The numbered installation and command examples below are compatibility reference;
+new users should follow the manual for platform-specific installation, the ignored
+default-input workaround, and explicit current research prompt selections. Older synthesis
+entry points remain available for their original contracts and archive replay.
+
+## Historical extraction reference
+
+Send one chunk of text (`species_database.txt`) plus a configurable prompt to local Ollama
+models (including Qwen, DeepSeek and Llama) and cloud models (GPT, Claude and Gemini).
+One pipeline renders the prompt, dispatches requests, and writes answers and metrics.
 
 ```
 species_database.txt ─┐
@@ -13,8 +111,10 @@ settings.json ────────┘             qwen3:8b    ─► extract
 ```
 
 Everything the run does is driven by `settings.json`: the prompt, the list of models, the
-Ollama options, the output folders and the execution mode. Nothing leaves your machine —
-there are no API keys and no network calls except to your own Ollama server.
+Ollama options, the output folders and the execution mode. Local model requests go to the
+configured Ollama server; cloud requests send the rendered prompt to the selected provider.
+Cloud clients use `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, and `GEMINI_API_KEY` (or
+`GOOGLE_API_KEY`); `.env` is loaded at CLI startup.
 
 ---
 
@@ -22,10 +122,10 @@ there are no API keys and no network calls except to your own Ollama server.
 
 | Requirement | Notes |
 | --- | --- |
-| Python | 3.12+ (developed and tested on 3.12) |
-| Ollama | Installed and running (`ollama serve`, or the Ollama desktop app) |
-| Models | Pulled locally, e.g. `ollama pull llama3.1:8b` |
-| Packages | `ollama>=0.6.0`, `pydantic>=2.0` (declared in `pyproject.toml`) |
+| Python | 3.12+ declared; handoff verified on 3.14.3 (see manual) |
+| Ollama | Required only for local models; running via `ollama serve` or the desktop app |
+| Models | Local models must be pulled; cloud models require provider credentials/access |
+| Packages | Install dependencies from `pyproject.toml`, including the cloud SDKs |
 
 Check what you already have:
 
@@ -45,17 +145,17 @@ python -m venv .venv
 ```
 
 `.venv/` is already git-ignored. You can also run the tool with any interpreter that has
-`ollama` and `pydantic` available — the package is importable straight from this directory.
+the dependencies from `pyproject.toml` available — the package is importable straight from this directory.
 
 ---
 
-## 3. Quick start
+## 3. Extraction-only command examples
 
 ```powershell
-# 1. Show exactly what would run (no requests are sent to Ollama)
+# 1. Show exactly what would run (no provider requests)
 python extractor.py --dry-run
 
-# 2. Smoke test ONE model before spending time on all of them  <- start here
+# 2. LIVE: smoke test one installed local model
 python extractor.py --models llama3.1:8b
 
 # 3. Run every model listed in settings.json
@@ -93,6 +193,104 @@ Exit codes: `0` every model succeeded, `1` at least one model failed or was skip
 
 ---
 
+### Selecting local and cloud models together
+
+```sh
+# No-cost preview of all six model families; local identifiers are examples.
+python extractor.py --models qwen3:8b,deepseek-r1:8b,llama3.1:8b,gpt,claude,gemini --dry-run
+```
+
+Use `provider:model` for an explicit choice, such as `ollama:qwen3:8b` or
+`openai:gpt-5.4-nano`. Legacy `provider=model` still works. Bare configured model
+IDs retain their configured provider. Known cloud IDs and the local shorthand
+`qwen3:8b`, `deepseek-r1:8b`, and `llama3.1:8b` also work without configuration.
+For another local model, configure it or qualify it with `ollama:`; unknown bare
+names no longer silently select Ollama.
+
+The `model_aliases` object in `settings.json` defines short selections using separate
+provider/model fields. The project defines `gpt`, `claude`, `gemini`, `qwen`,
+`deepseek`, and `llama`. For example:
+
+```json
+"model_aliases": {
+  "qwen": {"provider": "ollama", "model": "qwen3:8b"},
+  "gpt": {"provider": "openai", "model": "gpt-5.4-nano"}
+}
+```
+
+Edit an alias's model ID here to select another version; provider runners do not
+need changes. Alias values must be direct provider/model objects, not strings or
+references to other aliases. Aliases do not add models to the default `models`
+list. Select all six with `--models qwen,deepseek,llama,gpt,claude,gemini`.
+They expand before execution; filenames, logs, and raw metadata retain full native
+model identities. Existing `gpt`, `claude`, and `gemini` defaults remain available
+for older settings files without alias definitions.
+
+A provider name (`openai`,
+`anthropic`, `gemini`, or `ollama`) selects its unique configured model. Multiple
+configured choices require an explicit model. If no model is configured for a cloud
+provider, the existing compatibility-alias model is used. `ollama` alone requires
+a unique configured local model. Unknown/ambiguous selections and repeated
+provider/model identities are errors; the same model label under different providers
+remains distinct. An explicit configured alias such as `gemini` selects its defined
+identity even when that provider has multiple configured models. If an alias also
+names a different configured/known native model, selection is ambiguous and requires
+qualification. Omitting `--models` preserves the configured list and order.
+
+Do not abbreviate native IDs into strings such as `openai.4-nano` or
+`gemini.8-flash`; these are recognized only if they are actual configured model IDs.
+Settings support legacy local strings and objects such as
+`{"provider": "openai", "model": "gpt-5.4-nano"}`. Supported provider IDs are `ollama`,
+`openai`, `anthropic`, and `gemini`. Output indices follow selection order even though
+execution remains grouped by provider. The index prevents collisions between identical
+labels or filename slugs. Cloud-only runs do not create or probe an Ollama client.
+Explicit qualification assigns a provider; it does not check a remote model catalog.
+Model availability and account access still need verification during an authorized run.
+
+`max_output_tokens` is the shared output cap. Ollama receives `num_predict` (an explicit
+`options.num_predict` takes precedence); OpenAI receives `max_output_tokens`; Anthropic
+receives `max_tokens`; Gemini receives `config.max_output_tokens`. If unset, OpenAI and
+Gemini use provider defaults, Anthropic uses the application's 4,096-token fallback,
+and Ollama retains its own default. Provider model limits still apply. Ollama options
+such as `temperature`, `seed`, and `num_ctx` are **not** applied to cloud models.
+
+The current experimental setting of **1,200 remains unchanged**. Given the observed
+truncation, a reasonable next experiment would start at **4,096 tokens for development**
+and **8,192 for term-heavy inputs**, then use completion reasons and measured token counts
+to adjust. These are starting points, not guarantees. Reasoning models may consume output
+budget on reasoning. For local runs, increasing output allowance also requires enough
+`num_ctx` for both the input and output; check the dry run first.
+
+All runners return `GenerationOutcome` with text, metrics, and a completion status.
+Partial, blocked, and empty responses do not count as successes; their received text and
+provider completion reason are retained. Legacy exception labels remain `error` for
+Ollama and `failed` for cloud failures. Prompt path, filename-derived version, template
+SHA-256, and rendered-prompt fingerprint appear in metadata and logs. Provider and effective
+output cap are also recorded. Markdown bodies and filenames retain the existing format
+for synthesis ingestion. Cloud requests are non-streaming; a user interrupt cannot save
+text that the SDK has not yet returned.
+
+### Protecting experimental outputs
+
+Extraction refuses existing answer filenames before contacting any provider. When
+`log_append` is false, existing destination logs and summaries are also refused.
+The error exits with code `2`; use a fresh `--output-dir` and, when needed, `--log-dir`.
+No overwrite flag or automatic filename suffix is introduced. Existing filenames and
+synthesis ingestion remain compatible. Non-conflicting targets may share a directory,
+and `log_append: true` continues to append logs as before.
+
+New run IDs combine an ISO timestamp with a UUID. Each destination directory records a
+permanent `.extraction_runs/<run-id-sha256>.json` reservation receipt; reusing a recorded
+ID fails even if no answer was written. Receipts indicate reservation, not successful
+completion. Markdown ingestion ignores these JSON files.
+
+A temporary `.extraction.lock` in each destination rejects concurrent runs sharing that
+directory. Normal exit removes only locks owned by the current run. A process crash may
+leave a lock: use fresh directories, or inspect the lock and verify that its process is
+no longer active before manually removing it. Existing locks are never automatically
+removed. Exclusive file creation provides a final safeguard against late collisions.
+Dry runs remain read-only previews and do not reserve destinations.
+
 ## 4. Settings reference (`settings.json`)
 
 | Key | Default | Meaning |
@@ -101,31 +299,31 @@ Exit codes: `0` every model succeeded, `1` at least one model failed or was skip
 | `input_file` | `species_database.txt` | The text chunk that is embedded into the prompt |
 | `prompt` | — | Inline prompt; should contain `{species_database}` |
 | `prompt_file` | `null` | Path to a prompt file; set **either** this or `prompt`, never both |
-| `models` | — | The N Ollama models to run, in order. `{i}` is the index in this list |
+| `models` | — | Local strings or provider/model objects; `{i}` follows selection order |
 | `options` | `{}` | Passed straight to Ollama (`temperature`, `num_ctx`, `seed`, `num_predict`, …) |
 | `output_dir` | `extractor_outputs` | Where answers are written |
 | `log_dir` | `extractor_logs` | Where per-model logs and the summary are written |
 | `index_base` | `0` | First `{i}`. Set to `1` to number models from one |
 | `log_date_format` | `%m_%d` | Date stamp in log file names (`MM_DD`) |
 | `log_append` | `true` | Same-day re-runs append a new `## Run` block instead of overwriting |
-| `stream` | `false` | Stream tokens to the console while a model is generating |
+| `stream` | `false` | Ollama only: stream tokens while a model is generating |
 | `keep_alive` | `"5m"` | How long Ollama keeps a model in memory after the request |
 | `request_timeout_seconds` | `900` | Per-request timeout |
-| `max_concurrency` | `1` | `1` = sequential; `>1` = thread pool (see section 8) |
+| `max_concurrency` | `1` | Ollama group only: `>1` uses a thread pool; clouds stay sequential |
 | `include_thinking` | `false` | Append the reasoning trace of thinking models to the answer file |
 | `output_metadata_header` | `true` | Write the `<!-- model, run id, fingerprint … -->` comment block |
 | `continue_on_error` | `true` | Keep going when a model is missing or fails |
 | `write_run_summary` | `true` | Also write `{log_dir}/summary_MM_DD.md` |
 | `prompt_placeholder` | `{species_database}` | The token replaced by the input text |
 | `max_input_characters` | `null` | Optional cap on how much of the input is embedded |
-| `fail_on_context_overrun` | `false` | `true` = refuse to run when the input does not fit the budget |
-| `max_output_tokens` | `null` | Cap on generated tokens; applied as `num_predict` unless you set that yourself |
+| `fail_on_context_overrun` | `false` | Refuse when the Ollama input budget is exceeded; cloud-only runs bypass this |
+| `max_output_tokens` | `null` | Shared cloud/local output cap; explicit Ollama `num_predict` overrides it locally |
 | `loop_guard` | `false` | Stop a model that has locked into repeating the same lines |
 | `loop_guard_repeats` | `25` | How often one line may repeat inside a 200-line window before the guard fires |
 
 The `settings.json` in this repository turns on three of these —
 `"fail_on_context_overrun": true`, `"max_output_tokens": 1200` and `"loop_guard": true` — because
-`species_database.txt` is far larger than any local context window (section 7) and a runaway
+the historical input exceeded local context windows (section 7) and a runaway
 model once had to be killed by hand (section 8).
 
 Relative paths are resolved against the folder that contains `settings.json`; `~` is expanded,
@@ -307,8 +505,9 @@ VRAM too and this laptop has about 8 GB in total.
 
 ## 8. Execution model: sequential by default (`max_concurrency`)
 
-Models run **one after another**, in the order they appear in `models`. `max_concurrency` in
-`settings.json` controls this:
+Execution is grouped: Ollama first, then OpenAI, Anthropic, and Gemini. Within each group,
+selection order is preserved. Cloud jobs remain sequential. `max_concurrency` in
+`settings.json` controls the Ollama group only:
 
 * `1` (default) — one request at a time, implemented with a plain loop. No GPU contention, so
   every measurement in section 6 is trustworthy and comparable between models.
@@ -370,7 +569,7 @@ with `max_output_tokens`, which caps `num_predict`, so a model can never generat
 ## 9. Tests and lint
 
 ```powershell
-.venv\Scripts\python -m pytest          # 99 tests, no Ollama server needed
+.venv\Scripts\python -m pytest          # mocked tests; no provider requests
 python -m ruff check .                  # matches the repository lint workflow
 python -m ruff format --check .
 ```

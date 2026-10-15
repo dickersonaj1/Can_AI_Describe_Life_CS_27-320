@@ -1,0 +1,13 @@
+{
+  "proposal_version": "1.2",
+  "identity": {
+    "proposal_id": "fixture-v12",
+    "input_sha256": "f74ea6498ab679051fc5e367ce444dbbf083e620db2183502445b3765bdea1d6",
+    "provider": "offline",
+    "model": "fixture",
+    "prompt_sha256": "a89a6fba0f8a8b2e9c453b3f6f1afb3e6249ee9280e8c2b8ba0cadfed22c5ab4"
+  },
+  "input_sha256": "f74ea6498ab679051fc5e367ce444dbbf083e620db2183502445b3765bdea1d6",
+  "prompt": "Synthetic offline proposal fixture.",
+  "prompt_sha256": "a89a6fba0f8a8b2e9c453b3f6f1afb3e6249ee9280e8c2b8ba0cadfed22c5ab4"
+}

@@ -16,7 +16,7 @@ _UNSAFE_MODEL_CHARS = re.compile(r"[^A-Za-z0-9._-]+")
 
 
 def slugify_model(model: str) -> str:
-    """Return a filesystem-safe slug for an Ollama model identifier."""
+    """Return a filesystem-safe slug for a model identifier from any provider."""
     slug = _UNSAFE_MODEL_CHARS.sub("_", model.strip().replace(":", "-"))
     return slug.strip("._-") or "model"
 

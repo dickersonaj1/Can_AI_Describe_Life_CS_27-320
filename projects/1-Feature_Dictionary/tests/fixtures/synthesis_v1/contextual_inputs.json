@@ -1,0 +1,275 @@
+{
+  "format_version": "synthesis-input-1.0",
+  "sources": [
+    {
+      "id": "src1",
+      "output_path": "synthetic-context-fixture.extraction.json",
+      "document": {
+        "format_version": "extraction-3.1",
+        "input": {
+          "source_path": "synthetic-context-fixture.txt",
+          "original_file_sha256": "1a6eb59c915e5d0c9711b23b144935d9ae2c0e706f73129201dbccd15f39b015",
+          "original_file_archive": "fixture.input.bin",
+          "supplied_text": "Organism: Acanthophis antarcticus.\nanal entire; tail spine; narrative; horn-like",
+          "supplied_text_sha256": "1a6eb59c915e5d0c9711b23b144935d9ae2c0e706f73129201dbccd15f39b015",
+          "truncated": false
+        },
+        "run": {
+          "run_id": "offline-context-fixture",
+          "provider": "ollama",
+          "model": "offline-fixture",
+          "prompt_version": "fixture",
+          "prompt_template_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "rendered_prompt_fingerprint": "fixture",
+          "completion_status": "success",
+          "completion_reason": "stop"
+        },
+        "entries": [
+          {
+            "term": "anal",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "anal",
+            "source_phrase": "anal",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 35,
+                    "end": 39
+                  },
+                  "phrase_span": {
+                    "start": 35,
+                    "end": 39
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "entire",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "entire",
+            "source_phrase": "entire",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 40,
+                    "end": 46
+                  },
+                  "phrase_span": {
+                    "start": 40,
+                    "end": 46
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "anal entire",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "anal entire",
+            "source_phrase": "anal entire",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 35,
+                    "end": 46
+                  },
+                  "phrase_span": {
+                    "start": 35,
+                    "end": 46
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "tail",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "tail",
+            "source_phrase": "tail",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 48,
+                    "end": 52
+                  },
+                  "phrase_span": {
+                    "start": 48,
+                    "end": 52
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "spine",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "spine",
+            "source_phrase": "spine",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 53,
+                    "end": 58
+                  },
+                  "phrase_span": {
+                    "start": 53,
+                    "end": 58
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "tail spine",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "tail spine",
+            "source_phrase": "tail spine",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 48,
+                    "end": 58
+                  },
+                  "phrase_span": {
+                    "start": 48,
+                    "end": 58
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "narrative",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "narrative",
+            "source_phrase": "narrative",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 60,
+                    "end": 69
+                  },
+                  "phrase_span": {
+                    "start": 60,
+                    "end": 69
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "horn-like",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "horn-like",
+            "source_phrase": "horn-like",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 71,
+                    "end": 80
+                  },
+                  "phrase_span": {
+                    "start": 71,
+                    "end": 80
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          }
+        ]
+      },
+      "raw_response": "{\"format_version\": \"extraction-3.1\", \"entries\": [{\"matched_text\": \"anal\", \"source_phrase\": \"anal\"}, {\"matched_text\": \"entire\", \"source_phrase\": \"entire\"}, {\"matched_text\": \"anal entire\", \"source_phrase\": \"anal entire\"}, {\"matched_text\": \"tail\", \"source_phrase\": \"tail\"}, {\"matched_text\": \"spine\", \"source_phrase\": \"spine\"}, {\"matched_text\": \"tail spine\", \"source_phrase\": \"tail spine\"}, {\"matched_text\": \"narrative\", \"source_phrase\": \"narrative\"}, {\"matched_text\": \"horn-like\", \"source_phrase\": \"horn-like\"}]}"
+    }
+  ],
+  "observations": [
+    {
+      "id": "o1",
+      "source_id": "src1",
+      "entry_index": 0
+    },
+    {
+      "id": "o2",
+      "source_id": "src1",
+      "entry_index": 1
+    },
+    {
+      "id": "o3",
+      "source_id": "src1",
+      "entry_index": 2
+    },
+    {
+      "id": "o4",
+      "source_id": "src1",
+      "entry_index": 3
+    },
+    {
+      "id": "o5",
+      "source_id": "src1",
+      "entry_index": 4
+    },
+    {
+      "id": "o6",
+      "source_id": "src1",
+      "entry_index": 5
+    },
+    {
+      "id": "o7",
+      "source_id": "src1",
+      "entry_index": 6
+    },
+    {
+      "id": "o8",
+      "source_id": "src1",
+      "entry_index": 7
+    }
+  ],
+  "source_context": [
+    {
+      "source_id": "src1",
+      "quoted_text": "Acanthophis antarcticus",
+      "start": 10,
+      "end": 33
+    }
+  ]
+}

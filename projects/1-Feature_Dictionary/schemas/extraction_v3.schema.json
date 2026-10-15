@@ -1,0 +1,293 @@
+{
+  "$defs": {
+    "EvidenceEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "term": {
+          "title": "Term",
+          "type": "string"
+        },
+        "model_term": {
+          "title": "Model Term",
+          "type": "string"
+        },
+        "evidence_type": {
+          "enum": [
+            "complete",
+            "embedded"
+          ],
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "matched_text": {
+          "title": "Matched Text",
+          "type": "string"
+        },
+        "source_phrase": {
+          "title": "Source Phrase",
+          "type": "string"
+        },
+        "location": {
+          "$ref": "#/$defs/Location"
+        },
+        "proposed_annotations": {
+          "default": null,
+          "title": "Proposed Annotations"
+        },
+        "issues": {
+          "items": {
+            "$ref": "#/$defs/Issue"
+          },
+          "title": "Issues",
+          "type": "array"
+        }
+      },
+      "required": [
+        "term",
+        "model_term",
+        "evidence_type",
+        "matched_text",
+        "source_phrase",
+        "location",
+        "issues"
+      ],
+      "title": "EvidenceEntry",
+      "type": "object"
+    },
+    "ExtractionInput": {
+      "additionalProperties": false,
+      "description": "Host-supplied metadata. Archive reference must identify unchanged original bytes.",
+      "properties": {
+        "source_path": {
+          "title": "Source Path",
+          "type": "string"
+        },
+        "original_file_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Original File Sha256",
+          "type": "string"
+        },
+        "original_file_archive": {
+          "title": "Original File Archive",
+          "type": "string"
+        },
+        "supplied_text": {
+          "title": "Supplied Text",
+          "type": "string"
+        },
+        "supplied_text_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Supplied Text Sha256",
+          "type": "string"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_path",
+        "original_file_sha256",
+        "original_file_archive",
+        "supplied_text",
+        "supplied_text_sha256",
+        "truncated"
+      ],
+      "title": "ExtractionInput",
+      "type": "object"
+    },
+    "ExtractionRun": {
+      "additionalProperties": false,
+      "description": "Provider completion is recorded separately from evidence validity.",
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "ollama",
+            "openai",
+            "anthropic",
+            "gemini"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt_version": {
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "prompt_template_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prompt Template Sha256",
+          "type": "string"
+        },
+        "rendered_prompt_fingerprint": {
+          "title": "Rendered Prompt Fingerprint",
+          "type": "string"
+        },
+        "completion_status": {
+          "title": "Completion Status",
+          "type": "string"
+        },
+        "completion_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Completion Reason"
+        }
+      },
+      "required": [
+        "run_id",
+        "provider",
+        "model",
+        "prompt_version",
+        "prompt_template_sha256",
+        "rendered_prompt_fingerprint",
+        "completion_status",
+        "completion_reason"
+      ],
+      "title": "ExtractionRun",
+      "type": "object"
+    },
+    "Issue": {
+      "additionalProperties": false,
+      "properties": {
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "severity",
+        "code",
+        "path",
+        "message"
+      ],
+      "title": "Issue",
+      "type": "object"
+    },
+    "Location": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "resolved",
+            "ambiguous",
+            "unmatched"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/LocationCandidate"
+          },
+          "title": "Candidates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status",
+        "candidates"
+      ],
+      "title": "Location",
+      "type": "object"
+    },
+    "LocationCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "match_span": {
+          "$ref": "#/$defs/Span"
+        },
+        "phrase_span": {
+          "$ref": "#/$defs/Span"
+        }
+      },
+      "required": [
+        "match_span",
+        "phrase_span"
+      ],
+      "title": "LocationCandidate",
+      "type": "object"
+    },
+    "Span": {
+      "additionalProperties": false,
+      "description": "Zero-based Python string positions; end is excluded. Never UTF-8 byte offsets.",
+      "properties": {
+        "start": {
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "minimum": 0,
+          "title": "End",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "Span",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Host-assembled artifact; loading its shape alone does not validate its evidence.",
+  "properties": {
+    "format_version": {
+      "const": "extraction-3.0",
+      "title": "Format Version",
+      "type": "string"
+    },
+    "input": {
+      "$ref": "#/$defs/ExtractionInput"
+    },
+    "run": {
+      "$ref": "#/$defs/ExtractionRun"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/EvidenceEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    }
+  },
+  "required": [
+    "format_version",
+    "input",
+    "run",
+    "entries"
+  ],
+  "title": "ExtractionDocument",
+  "type": "object"
+}

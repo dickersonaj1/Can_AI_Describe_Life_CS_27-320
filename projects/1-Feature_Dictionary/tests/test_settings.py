@@ -169,3 +169,9 @@ def test_output_cap_and_loop_guard_can_be_configured(tmp_path):
     assert loaded.settings.max_output_tokens == 1200
     assert loaded.settings.loop_guard is True
     assert loaded.settings.loop_guard_repeats == 10
+
+
+@pytest.mark.parametrize("model", ["", "   "])
+def test_blank_model_identifier_rejected(tmp_path, model):
+    with pytest.raises(SettingsError, match="model"):
+        load_settings(write_settings(tmp_path, models=[model]))
