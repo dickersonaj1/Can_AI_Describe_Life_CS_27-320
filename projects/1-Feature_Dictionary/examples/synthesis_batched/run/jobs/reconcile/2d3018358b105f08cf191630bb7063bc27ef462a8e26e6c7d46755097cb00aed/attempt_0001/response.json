@@ -1,0 +1,14 @@
+{
+  "request_sha256": "2d3018358b105f08cf191630bb7063bc27ef462a8e26e6c7d46755097cb00aed",
+  "response": {
+    "status": "completed",
+    "id": "fake-response",
+    "usage": {
+      "input_tokens": 10,
+      "output_tokens": 20
+    },
+    "incomplete_details": null
+  },
+  "output_text": "{\"decisions\": [{\"left\": \"b1:c1\", \"right\": \"b2:c0\", \"action\": \"merge\", \"rationale\": \"Synthetic explicit sense comparison\", \"left_sense\": null, \"right_sense\": null}]}",
+  "error": null
+}

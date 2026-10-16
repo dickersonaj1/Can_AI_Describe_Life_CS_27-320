@@ -1,0 +1,249 @@
+{
+  "$defs": {
+    "EquivalenceProposal": {
+      "additionalProperties": false,
+      "description": "An unresolved semantic suggestion, never an instruction to merge.",
+      "properties": {
+        "record_refs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Record Refs",
+          "type": "array"
+        },
+        "observation_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "status": {
+          "const": "pending_review",
+          "default": "pending_review",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_refs",
+        "observation_ids",
+        "rationale"
+      ],
+      "title": "EquivalenceProposal",
+      "type": "object"
+    },
+    "ProposalDisposition": {
+      "additionalProperties": false,
+      "properties": {
+        "observation_id": {
+          "minLength": 1,
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "mapped",
+            "excluded",
+            "unresolved"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "record_refs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Record Refs",
+          "type": "array"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "observation_id",
+        "status",
+        "record_refs",
+        "reason"
+      ],
+      "title": "ProposalDisposition",
+      "type": "object"
+    },
+    "ProposalRecord": {
+      "additionalProperties": false,
+      "description": "Roles may share observation IDs; parent_refs are presentation anchors only.",
+      "properties": {
+        "ref": {
+          "minLength": 1,
+          "title": "Ref",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "anatomical_noun",
+            "compound",
+            "subterm"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "observation_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "parent_refs": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Parent Refs",
+          "type": "array"
+        },
+        "subterm_refs": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Subterm Refs",
+          "type": "array"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "morphological_descriptor",
+                "anatomical_modifier",
+                "supporting_noun",
+                "unresolved"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ref",
+        "role",
+        "text",
+        "observation_ids",
+        "rationale"
+      ],
+      "title": "ProposalRecord",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {
+      "const": "synthesis-proposal-1.0",
+      "title": "Format Version",
+      "type": "string"
+    },
+    "proposal_id": {
+      "minLength": 1,
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "input_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Sha256",
+      "type": "string"
+    },
+    "provider": {
+      "minLength": 1,
+      "title": "Provider",
+      "type": "string"
+    },
+    "model": {
+      "minLength": 1,
+      "title": "Model",
+      "type": "string"
+    },
+    "prompt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prompt Sha256",
+      "type": "string"
+    },
+    "records": {
+      "items": {
+        "$ref": "#/$defs/ProposalRecord"
+      },
+      "title": "Records",
+      "type": "array"
+    },
+    "observation_dispositions": {
+      "items": {
+        "$ref": "#/$defs/ProposalDisposition"
+      },
+      "title": "Observation Dispositions",
+      "type": "array"
+    },
+    "equivalence_proposals": {
+      "items": {
+        "$ref": "#/$defs/EquivalenceProposal"
+      },
+      "title": "Equivalence Proposals",
+      "type": "array"
+    },
+    "review_notes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Review Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "format_version",
+    "proposal_id",
+    "input_sha256",
+    "provider",
+    "model",
+    "prompt_sha256",
+    "records",
+    "observation_dispositions",
+    "equivalence_proposals",
+    "review_notes"
+  ],
+  "title": "InventoryProposal",
+  "type": "object"
+}

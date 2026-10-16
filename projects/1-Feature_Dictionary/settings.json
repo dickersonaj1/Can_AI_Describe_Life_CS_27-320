@@ -1,0 +1,44 @@
+{
+  "host": null,
+  "input_file": "species_database.txt",
+  "prompt": null,
+  "prompt_file": "prompts/extraction_v2.txt",
+  "models": [
+    {
+      "provider": "openai",
+      "model": "gpt-5.4-nano"
+    }
+  ],
+  "model_aliases": {
+    "gpt": {"provider": "openai", "model": "gpt-5.4-nano"},
+    "claude": {"provider": "anthropic", "model": "claude-sonnet-4-5-20250929"},
+    "gemini": {"provider": "gemini", "model": "gemini-3.8-flash"},
+    "qwen": {"provider": "ollama", "model": "qwen3:8b"},
+    "deepseek": {"provider": "ollama", "model": "deepseek-r1:8b"},
+    "llama": {"provider": "ollama", "model": "llama3.1:8b"}
+  },
+  "options": {
+    "temperature": 0.2,
+    "num_ctx": 16384,
+    "seed": 42
+  },
+  "output_dir": "extractor_outputs",
+  "log_dir": "extractor_logs",
+  "index_base": 0,
+  "log_date_format": "%m_%d",
+  "log_append": true,
+  "stream": true,
+  "keep_alive": "5m",
+  "request_timeout_seconds": 900,
+  "max_concurrency": 1,
+  "include_thinking": false,
+  "output_metadata_header": true,
+  "continue_on_error": true,
+  "write_run_summary": true,
+  "prompt_placeholder": "{species_database}",
+  "max_input_characters": null,
+  "fail_on_context_overrun": true,
+  "max_output_tokens": 4096,
+  "loop_guard": true,
+  "loop_guard_repeats": 25
+}

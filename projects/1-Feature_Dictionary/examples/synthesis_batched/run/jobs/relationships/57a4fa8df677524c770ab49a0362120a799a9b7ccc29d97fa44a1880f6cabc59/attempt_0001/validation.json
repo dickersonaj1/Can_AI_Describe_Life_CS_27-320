@@ -1,0 +1,19 @@
+{
+  "valid": true,
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "POSSIBLY_INCOMPLETE",
+      "path": "/sources/src_16f16798bad1aa97c17cef3315c5b46e89ea14220cc7489fe882e49f30efd7b3",
+      "message": "Expected Homonyms section is absent; review completeness."
+    },
+    {
+      "severity": "warning",
+      "code": "POSSIBLY_INCOMPLETE",
+      "path": "/sources/src_7df61faacc56a860570acdb6d351f24c95ef8cf2bbff9b951ef90a3d06809a4d",
+      "message": "Expected Homonyms section is absent; review completeness."
+    }
+  ],
+  "error_count": 0,
+  "warning_count": 2
+}

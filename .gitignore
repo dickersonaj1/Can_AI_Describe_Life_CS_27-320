@@ -2,6 +2,7 @@
 .env
 .env.*
 !*.example
+species_database.txt
 secrets.json
 credentials.json
 
@@ -20,6 +21,8 @@ env/
 build/
 dist/
 ./chroma
+chroma/
+projects/*/chroma/
 
 # System and VSC
 .clinerules

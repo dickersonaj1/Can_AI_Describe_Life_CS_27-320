@@ -1,0 +1,14 @@
+{
+  "request_sha256": "57a4fa8df677524c770ab49a0362120a799a9b7ccc29d97fa44a1880f6cabc59",
+  "response": {
+    "status": "completed",
+    "id": "fake-response",
+    "usage": {
+      "input_tokens": 10,
+      "output_tokens": 20
+    },
+    "incomplete_details": null
+  },
+  "output_text": "{\"relationships\": [{\"subject_ref\": \"b1:c1\", \"predicate\": \"part_of\", \"object_ref\": \"b1:c0\", \"observation_ids\": [\"o2\", \"o4\"], \"rationale\": \"Synthetic cross-batch inference, unverified\"}, {\"subject_ref\": \"b1:c1\", \"predicate\": \"subtype_of\", \"object_ref\": \"b2:c1\", \"observation_ids\": [\"o2\", \"o4\"], \"rationale\": \"Synthetic cross-batch inference, unverified\"}]}",
+  "error": null
+}

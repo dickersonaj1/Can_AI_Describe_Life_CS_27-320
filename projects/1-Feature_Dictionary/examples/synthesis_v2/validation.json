@@ -1,0 +1,14 @@
+{
+  "schema_version": "2.0",
+  "valid": true,
+  "error_count": 0,
+  "warning_count": 1,
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "UNRESOLVED_OBSERVATION",
+      "path": "/observation_dispositions/6",
+      "message": "Retained section boilerplate"
+    }
+  ]
+}

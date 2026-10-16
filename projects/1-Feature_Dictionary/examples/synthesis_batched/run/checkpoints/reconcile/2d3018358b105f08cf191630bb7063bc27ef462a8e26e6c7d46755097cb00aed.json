@@ -1,0 +1,31 @@
+{
+  "stage": "reconcile",
+  "job_id": "2d3018358b105f08cf191630bb7063bc27ef462a8e26e6c7d46755097cb00aed",
+  "comparisons": [
+    [
+      "b1:c0",
+      "b1:c1"
+    ],
+    [
+      "b1:c0",
+      "b2:c0"
+    ],
+    [
+      "b1:c0",
+      "b2:c1"
+    ],
+    [
+      "b1:c1",
+      "b2:c0"
+    ],
+    [
+      "b1:c1",
+      "b2:c1"
+    ],
+    [
+      "b2:c0",
+      "b2:c1"
+    ]
+  ],
+  "response_id": "fake-response"
+}

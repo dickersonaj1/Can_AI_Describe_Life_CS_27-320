@@ -1,0 +1,135 @@
+{
+  "artifact_version": "2.0",
+  "inputs": {
+    "sources": [
+      {
+        "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+        "output_path": "fixture.md",
+        "model": "synthetic-fixture",
+        "extraction_run_id": null,
+        "prompt_fingerprint": null,
+        "sha256": "8fd4ff69348c0f20ec69028e7d942f9fb0aabed7ed8675fad79b5067b06deb26",
+        "raw_bytes_b64": "PCEtLQptb2RlbDogc3ludGhldGljLWZpeHR1cmUKc3RhdHVzOiBzdWNjZXNzCmlucHV0X2NoYXJhY3RlcnNfdXNlZDogMTIzCi0tPgojIyBQcmltYXJ5IHRlcm1zCiogKipzY2FsZXMqKiAtIHN5bm9ueW1zOiBgc2NhbGVgIC0gaG9tb255bXM6CiogKiprZWVsaW5nKiogLSBzeW5vbnltczogLSBob21vbnltczoKKiAqKmtlZWxlZCoqIC0gc3lub255bXM6IC0gaG9tb255bXM6CiogKipoZWFkKiogLSBzeW5vbnltczogLSBob21vbnltczoKKiAqKmhlYWQgc2NhbGVzKiogLSBzeW5vbnltczogYGhlYWQtc2NhbGVzYCAtIGhvbW9ueW1zOgoqICoqbWlkYm9keSBzY2FsZSByb3dzKiogLSBzeW5vbnltczogYE1CU1JgIC0gaG9tb255bXM6CiMjIEhvbW9ueW1zCk5vbmUgZm91bmQK",
+        "metadata": [
+          {
+            "key": "model",
+            "value": "synthetic-fixture"
+          },
+          {
+            "key": "status",
+            "value": "success"
+          },
+          {
+            "key": "input_characters_used",
+            "value": "123"
+          }
+        ]
+      }
+    ],
+    "observations": [
+      {
+        "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_7",
+        "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+        "line": 7,
+        "raw_text": "* **scales** - synonyms: `scale` - homonyms:",
+        "category": "term_entry",
+        "observed_terms": [
+          "scales",
+          "scale"
+        ],
+        "synonym_claims": [
+          "scale"
+        ],
+        "homonym_claims": []
+      },
+      {
+        "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_8",
+        "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+        "line": 8,
+        "raw_text": "* **keeling** - synonyms: - homonyms:",
+        "category": "term_entry",
+        "observed_terms": [
+          "keeling"
+        ],
+        "synonym_claims": [],
+        "homonym_claims": []
+      },
+      {
+        "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_9",
+        "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+        "line": 9,
+        "raw_text": "* **keeled** - synonyms: - homonyms:",
+        "category": "term_entry",
+        "observed_terms": [
+          "keeled"
+        ],
+        "synonym_claims": [],
+        "homonym_claims": []
+      },
+      {
+        "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_10",
+        "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+        "line": 10,
+        "raw_text": "* **head** - synonyms: - homonyms:",
+        "category": "term_entry",
+        "observed_terms": [
+          "head"
+        ],
+        "synonym_claims": [],
+        "homonym_claims": []
+      },
+      {
+        "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11",
+        "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+        "line": 11,
+        "raw_text": "* **head scales** - synonyms: `head-scales` - homonyms:",
+        "category": "term_entry",
+        "observed_terms": [
+          "head scales",
+          "head-scales"
+        ],
+        "synonym_claims": [
+          "head-scales"
+        ],
+        "homonym_claims": []
+      },
+      {
+        "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_12",
+        "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+        "line": 12,
+        "raw_text": "* **midbody scale rows** - synonyms: `MBSR` - homonyms:",
+        "category": "term_entry",
+        "observed_terms": [
+          "midbody scale rows",
+          "MBSR"
+        ],
+        "synonym_claims": [
+          "MBSR"
+        ],
+        "homonym_claims": []
+      },
+      {
+        "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_14",
+        "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+        "line": 14,
+        "raw_text": "None found",
+        "category": "unparsed",
+        "observed_terms": [],
+        "synonym_claims": [],
+        "homonym_claims": []
+      }
+    ],
+    "issues": []
+  },
+  "request": {
+    "model": "synthetic-fixture",
+    "instructions": "Offline fixture"
+  },
+  "response": {
+    "status": "completed",
+    "id": "fixture-response"
+  },
+  "output_text": "{\"terms\": [{\"ref\": \"c0\", \"kind\": \"structure\", \"characteristic_type\": null, \"sense_note\": null, \"scope_note\": null, \"expressions\": [{\"text\": \"scales\", \"role\": \"preferred\", \"language\": null, \"expansion\": null, \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_7\"]}, {\"text\": \"scale\", \"role\": \"grammatical_variant\", \"language\": null, \"expansion\": null, \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_7\"]}], \"notes\": \"\"}, {\"ref\": \"c1\", \"kind\": \"characteristic\", \"characteristic_type\": null, \"sense_note\": null, \"scope_note\": null, \"expressions\": [{\"text\": \"keeling\", \"role\": \"preferred\", \"language\": null, \"expansion\": null, \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_8\"]}], \"notes\": \"\"}, {\"ref\": \"c2\", \"kind\": \"character_state\", \"characteristic_type\": null, \"sense_note\": null, \"scope_note\": null, \"expressions\": [{\"text\": \"keeled\", \"role\": \"preferred\", \"language\": null, \"expansion\": null, \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_9\"]}], \"notes\": \"\"}, {\"ref\": \"c3\", \"kind\": \"structure\", \"characteristic_type\": null, \"sense_note\": null, \"scope_note\": null, \"expressions\": [{\"text\": \"head\", \"role\": \"preferred\", \"language\": null, \"expansion\": null, \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_10\"]}], \"notes\": \"\"}, {\"ref\": \"c4\", \"kind\": \"structure\", \"characteristic_type\": null, \"sense_note\": null, \"scope_note\": null, \"expressions\": [{\"text\": \"head scales\", \"role\": \"preferred\", \"language\": null, \"expansion\": null, \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11\"]}, {\"text\": \"head-scales\", \"role\": \"grammatical_variant\", \"language\": null, \"expansion\": null, \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11\"]}], \"notes\": \"\"}, {\"ref\": \"c5\", \"kind\": \"structure\", \"characteristic_type\": null, \"sense_note\": null, \"scope_note\": null, \"expressions\": [{\"text\": \"midbody scale rows\", \"role\": \"preferred\", \"language\": null, \"expansion\": null, \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_12\"]}, {\"text\": \"MBSR\", \"role\": \"acronym\", \"language\": null, \"expansion\": \"midbody scale rows\", \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_12\"]}], \"notes\": \"\"}], \"relationships\": [{\"subject_ref\": \"c1\", \"predicate\": \"describes\", \"object_ref\": \"c0\", \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_8\"], \"rationale\": \"Synthetic example proposal\"}, {\"subject_ref\": \"c2\", \"predicate\": \"state_of\", \"object_ref\": \"c1\", \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_9\"], \"rationale\": \"Synthetic example proposal\"}, {\"subject_ref\": \"c4\", \"predicate\": \"part_of\", \"object_ref\": \"c3\", \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11\"], \"rationale\": \"Synthetic example proposal\"}, {\"subject_ref\": \"c4\", \"predicate\": \"subtype_of\", \"object_ref\": \"c0\", \"observation_ids\": [\"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11\"], \"rationale\": \"Synthetic example proposal\"}], \"observation_dispositions\": [{\"observation_id\": \"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_7\", \"status\": \"mapped\", \"term_refs\": [\"c0\"], \"reason\": null}, {\"observation_id\": \"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_8\", \"status\": \"mapped\", \"term_refs\": [\"c1\"], \"reason\": null}, {\"observation_id\": \"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_9\", \"status\": \"mapped\", \"term_refs\": [\"c2\"], \"reason\": null}, {\"observation_id\": \"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_10\", \"status\": \"mapped\", \"term_refs\": [\"c3\"], \"reason\": null}, {\"observation_id\": \"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11\", \"status\": \"mapped\", \"term_refs\": [\"c4\"], \"reason\": null}, {\"observation_id\": \"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_12\", \"status\": \"mapped\", \"term_refs\": [\"c5\"], \"reason\": null}, {\"observation_id\": \"src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_14\", \"status\": \"unresolved\", \"term_refs\": [], \"reason\": \"Retained section boilerplate\"}], \"review_notes\": []}",
+  "error": null,
+  "candidate_override": null
+}

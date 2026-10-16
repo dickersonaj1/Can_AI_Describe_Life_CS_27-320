@@ -1,0 +1,14 @@
+{
+  "request_sha256": "6f79810f08cba26e5d1a27e7296039822422a0e6a53bba439b3a8933f908e29c",
+  "response": {
+    "status": "completed",
+    "id": "fake-response",
+    "usage": {
+      "input_tokens": 10,
+      "output_tokens": 20
+    },
+    "incomplete_details": null
+  },
+  "output_text": "{\"terms\": [{\"ref\": \"c0\", \"kind\": \"structure\", \"characteristic_type\": null, \"sense_note\": null, \"scope_note\": null, \"notes\": \"\", \"expressions\": [{\"text\": \"head scales\", \"role\": \"preferred\", \"language\": null, \"expansion\": null, \"observation_ids\": [\"o4\"]}]}, {\"ref\": \"c1\", \"kind\": \"structure\", \"characteristic_type\": null, \"sense_note\": null, \"scope_note\": null, \"notes\": \"\", \"expressions\": [{\"text\": \"scales\", \"role\": \"preferred\", \"language\": null, \"expansion\": null, \"observation_ids\": [\"o3\"]}]}], \"relationships\": [], \"observation_dispositions\": [{\"observation_id\": \"o4\", \"status\": \"mapped\", \"term_refs\": [\"c0\"], \"reason\": null}, {\"observation_id\": \"o3\", \"status\": \"mapped\", \"term_refs\": [\"c1\"], \"reason\": null}], \"review_notes\": []}",
+  "error": null
+}

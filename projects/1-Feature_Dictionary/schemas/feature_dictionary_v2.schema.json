@@ -1,0 +1,538 @@
+{
+  "$defs": {
+    "Disposition": {
+      "additionalProperties": false,
+      "properties": {
+        "observation_id": {
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "mapped",
+            "excluded",
+            "unresolved"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "term_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Term Ids",
+          "type": "array"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "observation_id",
+        "status",
+        "term_ids",
+        "reason"
+      ],
+      "title": "Disposition",
+      "type": "object"
+    },
+    "Expression": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "preferred",
+            "synonym",
+            "spelling_variant",
+            "grammatical_variant",
+            "acronym",
+            "translation"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Language"
+        },
+        "expansion": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Expansion"
+        },
+        "observation_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "text",
+        "role",
+        "language",
+        "expansion",
+        "observation_ids"
+      ],
+      "title": "Expression",
+      "type": "object"
+    },
+    "Issue": {
+      "additionalProperties": false,
+      "properties": {
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "severity",
+        "code",
+        "path",
+        "message"
+      ],
+      "title": "Issue",
+      "type": "object"
+    },
+    "MetadataItem": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "title": "MetadataItem",
+      "type": "object"
+    },
+    "Observation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "line": {
+          "title": "Line",
+          "type": "integer"
+        },
+        "raw_text": {
+          "title": "Raw Text",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "term_entry",
+            "homonym_claim",
+            "unparsed"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "observed_terms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Observed Terms",
+          "type": "array"
+        },
+        "synonym_claims": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Synonym Claims",
+          "type": "array"
+        },
+        "homonym_claims": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Homonym Claims",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "source_id",
+        "line",
+        "raw_text",
+        "category",
+        "observed_terms",
+        "synonym_claims",
+        "homonym_claims"
+      ],
+      "title": "Observation",
+      "type": "object"
+    },
+    "Relationship": {
+      "additionalProperties": false,
+      "properties": {
+        "subject_id": {
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "predicate": {
+          "enum": [
+            "part_of",
+            "subtype_of",
+            "describes",
+            "state_of"
+          ],
+          "title": "Predicate",
+          "type": "string"
+        },
+        "object_id": {
+          "title": "Object Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "proposed",
+          "title": "Status",
+          "type": "string"
+        },
+        "basis": {
+          "const": "model_inference",
+          "title": "Basis",
+          "type": "string"
+        },
+        "observation_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject_id",
+        "predicate",
+        "object_id",
+        "status",
+        "basis",
+        "observation_ids",
+        "rationale"
+      ],
+      "title": "Relationship",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "output_path": {
+          "title": "Output Path",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Model"
+        },
+        "extraction_run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Extraction Run Id"
+        },
+        "prompt_fingerprint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Prompt Fingerprint"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "raw_bytes_b64": {
+          "title": "Raw Bytes B64",
+          "type": "string"
+        },
+        "metadata": {
+          "items": {
+            "$ref": "#/$defs/MetadataItem"
+          },
+          "title": "Metadata",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "output_path",
+        "model",
+        "extraction_run_id",
+        "prompt_fingerprint",
+        "sha256",
+        "raw_bytes_b64",
+        "metadata"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "SynthesisRun": {
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "response_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Response Id"
+        },
+        "prompt_sha256": {
+          "title": "Prompt Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model",
+        "response_id",
+        "prompt_sha256"
+      ],
+      "title": "SynthesisRun",
+      "type": "object"
+    },
+    "Term": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "structure",
+            "characteristic",
+            "character_state",
+            "unresolved"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "characteristic_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "measurement",
+                "qualitative"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Characteristic Type"
+        },
+        "sense_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sense Note"
+        },
+        "scope_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Scope Note"
+        },
+        "expressions": {
+          "items": {
+            "$ref": "#/$defs/Expression"
+          },
+          "title": "Expressions",
+          "type": "array"
+        },
+        "notes": {
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "characteristic_type",
+        "sense_note",
+        "scope_note",
+        "expressions",
+        "notes"
+      ],
+      "title": "Term",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "const": "proposed_requires_review",
+      "title": "Status",
+      "type": "string"
+    },
+    "synthesis_run": {
+      "$ref": "#/$defs/SynthesisRun"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "observations": {
+      "items": {
+        "$ref": "#/$defs/Observation"
+      },
+      "title": "Observations",
+      "type": "array"
+    },
+    "terms": {
+      "items": {
+        "$ref": "#/$defs/Term"
+      },
+      "title": "Terms",
+      "type": "array"
+    },
+    "relationships": {
+      "items": {
+        "$ref": "#/$defs/Relationship"
+      },
+      "title": "Relationships",
+      "type": "array"
+    },
+    "observation_dispositions": {
+      "items": {
+        "$ref": "#/$defs/Disposition"
+      },
+      "title": "Observation Dispositions",
+      "type": "array"
+    },
+    "issues": {
+      "items": {
+        "$ref": "#/$defs/Issue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "review_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Review Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "status",
+    "synthesis_run",
+    "sources",
+    "observations",
+    "terms",
+    "relationships",
+    "observation_dispositions",
+    "issues",
+    "review_notes"
+  ],
+  "title": "Dictionary",
+  "type": "object"
+}

@@ -1,0 +1,48 @@
+# Generated extraction artefacts (model answers + run logs)
+extractor_outputs/
+extractor_logs/
+
+# Local environment and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.env
+
+# Generated synthesis results and archives
+synthesis_outputs/
+
+# Generated review/workflow exports: retain locally, stage curated examples explicitly
+/review_outputs/
+/workflow_outputs/
+
+# Generated offline replay exports and local coordination state (never delete archives)
+/examples/synthesis_batched/run/reconstructions/
+/examples/synthesis_batched/run/run.lock
+
+# Standalone-checkout protection; the parent repository also ignores these
+.DS_Store
+Thumbs.db
+venv/
+env/
+build/
+dist/
+*.egg-info/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+.env.*
+!.env.example
+!.env.*.example
+secrets.json
+credentials.json
+*.pem
+*.key
+/species_database.txt
+
+# Local experimental data
+Test Data/
+tests/250k
+tests/ALL_SNAKES!!!.txt

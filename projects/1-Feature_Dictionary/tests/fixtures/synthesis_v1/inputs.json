@@ -1,0 +1,267 @@
+{
+  "format_version": "synthesis-input-1.0",
+  "sources": [
+    {
+      "id": "src1",
+      "output_path": "fixture.extraction.json",
+      "document": {
+        "format_version": "extraction-3.1",
+        "input": {
+          "source_path": "synthetic-fixture.txt",
+          "original_file_sha256": "f9da5c2d071d1d932fbc5d0158e139789fcfc74676580006a843856facd740c5",
+          "original_file_archive": "fixture.input.bin",
+          "supplied_text": "anal entire; tail spine; narrative; horn-like",
+          "supplied_text_sha256": "f9da5c2d071d1d932fbc5d0158e139789fcfc74676580006a843856facd740c5",
+          "truncated": false
+        },
+        "run": {
+          "run_id": "offline-fixture",
+          "provider": "ollama",
+          "model": "offline-fixture",
+          "prompt_version": "fixture",
+          "prompt_template_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "rendered_prompt_fingerprint": "fixture",
+          "completion_status": "success",
+          "completion_reason": "stop"
+        },
+        "entries": [
+          {
+            "term": "anal",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "anal",
+            "source_phrase": "anal",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "phrase_span": {
+                    "start": 0,
+                    "end": 4
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "entire",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "entire",
+            "source_phrase": "entire",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 5,
+                    "end": 11
+                  },
+                  "phrase_span": {
+                    "start": 5,
+                    "end": 11
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "anal entire",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "anal entire",
+            "source_phrase": "anal entire",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 0,
+                    "end": 11
+                  },
+                  "phrase_span": {
+                    "start": 0,
+                    "end": 11
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "tail",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "tail",
+            "source_phrase": "tail",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 13,
+                    "end": 17
+                  },
+                  "phrase_span": {
+                    "start": 13,
+                    "end": 17
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "spine",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "spine",
+            "source_phrase": "spine",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 18,
+                    "end": 23
+                  },
+                  "phrase_span": {
+                    "start": 18,
+                    "end": 23
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "tail spine",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "tail spine",
+            "source_phrase": "tail spine",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 13,
+                    "end": 23
+                  },
+                  "phrase_span": {
+                    "start": 13,
+                    "end": 23
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "narrative",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "narrative",
+            "source_phrase": "narrative",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 25,
+                    "end": 34
+                  },
+                  "phrase_span": {
+                    "start": 25,
+                    "end": 34
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "horn-like",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "horn-like",
+            "source_phrase": "horn-like",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 36,
+                    "end": 45
+                  },
+                  "phrase_span": {
+                    "start": 36,
+                    "end": 45
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          }
+        ]
+      },
+      "raw_response": "{\"format_version\": \"extraction-3.1\", \"entries\": [{\"matched_text\": \"anal\", \"source_phrase\": \"anal\"}, {\"matched_text\": \"entire\", \"source_phrase\": \"entire\"}, {\"matched_text\": \"anal entire\", \"source_phrase\": \"anal entire\"}, {\"matched_text\": \"tail\", \"source_phrase\": \"tail\"}, {\"matched_text\": \"spine\", \"source_phrase\": \"spine\"}, {\"matched_text\": \"tail spine\", \"source_phrase\": \"tail spine\"}, {\"matched_text\": \"narrative\", \"source_phrase\": \"narrative\"}, {\"matched_text\": \"horn-like\", \"source_phrase\": \"horn-like\"}]}"
+    }
+  ],
+  "observations": [
+    {
+      "id": "o1",
+      "source_id": "src1",
+      "entry_index": 0
+    },
+    {
+      "id": "o2",
+      "source_id": "src1",
+      "entry_index": 1
+    },
+    {
+      "id": "o3",
+      "source_id": "src1",
+      "entry_index": 2
+    },
+    {
+      "id": "o4",
+      "source_id": "src1",
+      "entry_index": 3
+    },
+    {
+      "id": "o5",
+      "source_id": "src1",
+      "entry_index": 4
+    },
+    {
+      "id": "o6",
+      "source_id": "src1",
+      "entry_index": 5
+    },
+    {
+      "id": "o7",
+      "source_id": "src1",
+      "entry_index": 6
+    },
+    {
+      "id": "o8",
+      "source_id": "src1",
+      "entry_index": 7
+    }
+  ]
+}

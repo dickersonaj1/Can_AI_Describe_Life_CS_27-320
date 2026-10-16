@@ -1,0 +1,442 @@
+{
+  "format_version": "synthesis-input-1.0",
+  "sources": [
+    {
+      "id": "src1",
+      "output_path": "synthetic-v12.json",
+      "document": {
+        "format_version": "extraction-3.1",
+        "input": {
+          "source_path": "synthetic-v12.txt",
+          "original_file_sha256": "eb7908ab7a6dd2a8163464a13815fdfca003de66156b5b3c45842774443739e7",
+          "original_file_archive": "fixture.input.bin",
+          "supplied_text": "anal entire; tail tip; tail spine; curved tail tip; curved tail spine; Tail; Total length; uncertain",
+          "supplied_text_sha256": "eb7908ab7a6dd2a8163464a13815fdfca003de66156b5b3c45842774443739e7",
+          "truncated": false
+        },
+        "run": {
+          "run_id": "offline-v12-fixture",
+          "provider": "ollama",
+          "model": "fixture",
+          "prompt_version": "fixture",
+          "prompt_template_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "rendered_prompt_fingerprint": "fixture",
+          "completion_status": "success",
+          "completion_reason": "stop"
+        },
+        "entries": [
+          {
+            "term": "anal",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "anal",
+            "source_phrase": "anal",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "phrase_span": {
+                    "start": 0,
+                    "end": 4
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "anal entire",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "anal entire",
+            "source_phrase": "anal entire",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 0,
+                    "end": 11
+                  },
+                  "phrase_span": {
+                    "start": 0,
+                    "end": 11
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "tail",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "tail",
+            "source_phrase": "tail",
+            "location": {
+              "status": "ambiguous",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 13,
+                    "end": 17
+                  },
+                  "phrase_span": {
+                    "start": 13,
+                    "end": 17
+                  }
+                },
+                {
+                  "match_span": {
+                    "start": 23,
+                    "end": 27
+                  },
+                  "phrase_span": {
+                    "start": 23,
+                    "end": 27
+                  }
+                },
+                {
+                  "match_span": {
+                    "start": 42,
+                    "end": 46
+                  },
+                  "phrase_span": {
+                    "start": 42,
+                    "end": 46
+                  }
+                },
+                {
+                  "match_span": {
+                    "start": 59,
+                    "end": 63
+                  },
+                  "phrase_span": {
+                    "start": 59,
+                    "end": 63
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": [
+              {
+                "severity": "warning",
+                "code": "AMBIGUOUS_LOCATION",
+                "path": "/entries/2",
+                "message": "All possible locations retained; none selected."
+              }
+            ]
+          },
+          {
+            "term": "tail tip",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "tail tip",
+            "source_phrase": "tail tip",
+            "location": {
+              "status": "ambiguous",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 13,
+                    "end": 21
+                  },
+                  "phrase_span": {
+                    "start": 13,
+                    "end": 21
+                  }
+                },
+                {
+                  "match_span": {
+                    "start": 42,
+                    "end": 50
+                  },
+                  "phrase_span": {
+                    "start": 42,
+                    "end": 50
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": [
+              {
+                "severity": "warning",
+                "code": "AMBIGUOUS_LOCATION",
+                "path": "/entries/3",
+                "message": "All possible locations retained; none selected."
+              }
+            ]
+          },
+          {
+            "term": "spine",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "spine",
+            "source_phrase": "spine",
+            "location": {
+              "status": "ambiguous",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 28,
+                    "end": 33
+                  },
+                  "phrase_span": {
+                    "start": 28,
+                    "end": 33
+                  }
+                },
+                {
+                  "match_span": {
+                    "start": 64,
+                    "end": 69
+                  },
+                  "phrase_span": {
+                    "start": 64,
+                    "end": 69
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": [
+              {
+                "severity": "warning",
+                "code": "AMBIGUOUS_LOCATION",
+                "path": "/entries/4",
+                "message": "All possible locations retained; none selected."
+              }
+            ]
+          },
+          {
+            "term": "tail spine",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "tail spine",
+            "source_phrase": "tail spine",
+            "location": {
+              "status": "ambiguous",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 23,
+                    "end": 33
+                  },
+                  "phrase_span": {
+                    "start": 23,
+                    "end": 33
+                  }
+                },
+                {
+                  "match_span": {
+                    "start": 59,
+                    "end": 69
+                  },
+                  "phrase_span": {
+                    "start": 59,
+                    "end": 69
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": [
+              {
+                "severity": "warning",
+                "code": "AMBIGUOUS_LOCATION",
+                "path": "/entries/5",
+                "message": "All possible locations retained; none selected."
+              }
+            ]
+          },
+          {
+            "term": "curved tail tip",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "curved tail tip",
+            "source_phrase": "curved tail tip",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 35,
+                    "end": 50
+                  },
+                  "phrase_span": {
+                    "start": 35,
+                    "end": 50
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "curved tail spine",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "curved tail spine",
+            "source_phrase": "curved tail spine",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 52,
+                    "end": 69
+                  },
+                  "phrase_span": {
+                    "start": 52,
+                    "end": 69
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "Tail",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "Tail",
+            "source_phrase": "Tail",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 71,
+                    "end": 75
+                  },
+                  "phrase_span": {
+                    "start": 71,
+                    "end": 75
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "Total length",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "Total length",
+            "source_phrase": "Total length",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 77,
+                    "end": 89
+                  },
+                  "phrase_span": {
+                    "start": 77,
+                    "end": 89
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          },
+          {
+            "term": "uncertain",
+            "model_term": null,
+            "evidence_type": "complete",
+            "matched_text": "uncertain",
+            "source_phrase": "uncertain",
+            "location": {
+              "status": "resolved",
+              "candidates": [
+                {
+                  "match_span": {
+                    "start": 91,
+                    "end": 100
+                  },
+                  "phrase_span": {
+                    "start": 91,
+                    "end": 100
+                  }
+                }
+              ]
+            },
+            "proposed_annotations": null,
+            "issues": []
+          }
+        ]
+      },
+      "raw_response": "{\"format_version\": \"extraction-3.1\", \"entries\": [{\"matched_text\": \"anal\", \"source_phrase\": \"anal\"}, {\"matched_text\": \"anal entire\", \"source_phrase\": \"anal entire\"}, {\"matched_text\": \"tail\", \"source_phrase\": \"tail\"}, {\"matched_text\": \"tail tip\", \"source_phrase\": \"tail tip\"}, {\"matched_text\": \"spine\", \"source_phrase\": \"spine\"}, {\"matched_text\": \"tail spine\", \"source_phrase\": \"tail spine\"}, {\"matched_text\": \"curved tail tip\", \"source_phrase\": \"curved tail tip\"}, {\"matched_text\": \"curved tail spine\", \"source_phrase\": \"curved tail spine\"}, {\"matched_text\": \"Tail\", \"source_phrase\": \"Tail\"}, {\"matched_text\": \"Total length\", \"source_phrase\": \"Total length\"}, {\"matched_text\": \"uncertain\", \"source_phrase\": \"uncertain\"}]}"
+    }
+  ],
+  "observations": [
+    {
+      "id": "o1",
+      "source_id": "src1",
+      "entry_index": 0
+    },
+    {
+      "id": "o2",
+      "source_id": "src1",
+      "entry_index": 1
+    },
+    {
+      "id": "o3",
+      "source_id": "src1",
+      "entry_index": 2
+    },
+    {
+      "id": "o4",
+      "source_id": "src1",
+      "entry_index": 3
+    },
+    {
+      "id": "o5",
+      "source_id": "src1",
+      "entry_index": 4
+    },
+    {
+      "id": "o6",
+      "source_id": "src1",
+      "entry_index": 5
+    },
+    {
+      "id": "o7",
+      "source_id": "src1",
+      "entry_index": 6
+    },
+    {
+      "id": "o8",
+      "source_id": "src1",
+      "entry_index": 7
+    },
+    {
+      "id": "o9",
+      "source_id": "src1",
+      "entry_index": 8
+    },
+    {
+      "id": "o10",
+      "source_id": "src1",
+      "entry_index": 9
+    },
+    {
+      "id": "o11",
+      "source_id": "src1",
+      "entry_index": 10
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "$defs": {
+    "EquivalenceProposal": {
+      "additionalProperties": false,
+      "description": "An unresolved semantic suggestion, never an instruction to merge.",
+      "properties": {
+        "record_refs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Record Refs",
+          "type": "array"
+        },
+        "observation_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "status": {
+          "const": "pending_review",
+          "default": "pending_review",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_refs",
+        "observation_ids",
+        "rationale"
+      ],
+      "title": "EquivalenceProposal",
+      "type": "object"
+    },
+    "IndexedDisposition": {
+      "additionalProperties": false,
+      "properties": {
+        "observation_id": {
+          "minLength": 1,
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "mapped",
+            "excluded",
+            "unresolved"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "term_refs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Term Refs",
+          "type": "array"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "observation_id",
+        "status",
+        "term_refs",
+        "reason"
+      ],
+      "title": "IndexedDisposition",
+      "type": "object"
+    },
+    "IndexedTerm": {
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "minLength": 1,
+          "title": "Ref",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "primary",
+            "compound"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "observation_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "primary_refs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Primary Refs",
+          "type": "array"
+        },
+        "expressions": {
+          "items": {
+            "$ref": "#/$defs/LocalExpression"
+          },
+          "title": "Expressions",
+          "type": "array"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ref",
+        "type",
+        "text",
+        "observation_ids",
+        "primary_refs",
+        "expressions",
+        "rationale"
+      ],
+      "title": "IndexedTerm",
+      "type": "object"
+    },
+    "LocalExpression": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "observation_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "observation_ids",
+        "rationale"
+      ],
+      "title": "LocalExpression",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {
+      "const": "synthesis-1.2",
+      "title": "Format Version",
+      "type": "string"
+    },
+    "proposal_id": {
+      "minLength": 1,
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "input_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Sha256",
+      "type": "string"
+    },
+    "provider": {
+      "minLength": 1,
+      "title": "Provider",
+      "type": "string"
+    },
+    "model": {
+      "minLength": 1,
+      "title": "Model",
+      "type": "string"
+    },
+    "prompt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prompt Sha256",
+      "type": "string"
+    },
+    "terms": {
+      "items": {
+        "$ref": "#/$defs/IndexedTerm"
+      },
+      "title": "Terms",
+      "type": "array"
+    },
+    "observation_dispositions": {
+      "items": {
+        "$ref": "#/$defs/IndexedDisposition"
+      },
+      "title": "Observation Dispositions",
+      "type": "array"
+    },
+    "equivalence_proposals": {
+      "items": {
+        "$ref": "#/$defs/EquivalenceProposal"
+      },
+      "title": "Equivalence Proposals",
+      "type": "array"
+    },
+    "review_notes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Review Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "format_version",
+    "proposal_id",
+    "input_sha256",
+    "provider",
+    "model",
+    "prompt_sha256",
+    "terms",
+    "observation_dispositions",
+    "equivalence_proposals",
+    "review_notes"
+  ],
+  "title": "IndexedProposal",
+  "type": "object"
+}

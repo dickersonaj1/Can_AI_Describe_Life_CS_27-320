@@ -1,0 +1,381 @@
+{
+  "schema_version": "2.0",
+  "status": "proposed_requires_review",
+  "synthesis_run": {
+    "model": "synthetic-fixture",
+    "response_id": "fixture-response",
+    "prompt_sha256": "acb7a2d0a476f0fef52897a32cb027b358e24da9b308121a01687c4a1f6045fc"
+  },
+  "sources": [
+    {
+      "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+      "output_path": "fixture.md",
+      "model": "synthetic-fixture",
+      "extraction_run_id": null,
+      "prompt_fingerprint": null,
+      "sha256": "8fd4ff69348c0f20ec69028e7d942f9fb0aabed7ed8675fad79b5067b06deb26",
+      "raw_bytes_b64": "PCEtLQptb2RlbDogc3ludGhldGljLWZpeHR1cmUKc3RhdHVzOiBzdWNjZXNzCmlucHV0X2NoYXJhY3RlcnNfdXNlZDogMTIzCi0tPgojIyBQcmltYXJ5IHRlcm1zCiogKipzY2FsZXMqKiAtIHN5bm9ueW1zOiBgc2NhbGVgIC0gaG9tb255bXM6CiogKiprZWVsaW5nKiogLSBzeW5vbnltczogLSBob21vbnltczoKKiAqKmtlZWxlZCoqIC0gc3lub255bXM6IC0gaG9tb255bXM6CiogKipoZWFkKiogLSBzeW5vbnltczogLSBob21vbnltczoKKiAqKmhlYWQgc2NhbGVzKiogLSBzeW5vbnltczogYGhlYWQtc2NhbGVzYCAtIGhvbW9ueW1zOgoqICoqbWlkYm9keSBzY2FsZSByb3dzKiogLSBzeW5vbnltczogYE1CU1JgIC0gaG9tb255bXM6CiMjIEhvbW9ueW1zCk5vbmUgZm91bmQK",
+      "metadata": [
+        {
+          "key": "model",
+          "value": "synthetic-fixture"
+        },
+        {
+          "key": "status",
+          "value": "success"
+        },
+        {
+          "key": "input_characters_used",
+          "value": "123"
+        }
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_7",
+      "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+      "line": 7,
+      "raw_text": "* **scales** - synonyms: `scale` - homonyms:",
+      "category": "term_entry",
+      "observed_terms": [
+        "scales",
+        "scale"
+      ],
+      "synonym_claims": [
+        "scale"
+      ],
+      "homonym_claims": []
+    },
+    {
+      "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_8",
+      "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+      "line": 8,
+      "raw_text": "* **keeling** - synonyms: - homonyms:",
+      "category": "term_entry",
+      "observed_terms": [
+        "keeling"
+      ],
+      "synonym_claims": [],
+      "homonym_claims": []
+    },
+    {
+      "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_9",
+      "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+      "line": 9,
+      "raw_text": "* **keeled** - synonyms: - homonyms:",
+      "category": "term_entry",
+      "observed_terms": [
+        "keeled"
+      ],
+      "synonym_claims": [],
+      "homonym_claims": []
+    },
+    {
+      "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_10",
+      "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+      "line": 10,
+      "raw_text": "* **head** - synonyms: - homonyms:",
+      "category": "term_entry",
+      "observed_terms": [
+        "head"
+      ],
+      "synonym_claims": [],
+      "homonym_claims": []
+    },
+    {
+      "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11",
+      "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+      "line": 11,
+      "raw_text": "* **head scales** - synonyms: `head-scales` - homonyms:",
+      "category": "term_entry",
+      "observed_terms": [
+        "head scales",
+        "head-scales"
+      ],
+      "synonym_claims": [
+        "head-scales"
+      ],
+      "homonym_claims": []
+    },
+    {
+      "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_12",
+      "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+      "line": 12,
+      "raw_text": "* **midbody scale rows** - synonyms: `MBSR` - homonyms:",
+      "category": "term_entry",
+      "observed_terms": [
+        "midbody scale rows",
+        "MBSR"
+      ],
+      "synonym_claims": [
+        "MBSR"
+      ],
+      "homonym_claims": []
+    },
+    {
+      "id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_14",
+      "source_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654",
+      "line": 14,
+      "raw_text": "None found",
+      "category": "unparsed",
+      "observed_terms": [],
+      "synonym_claims": [],
+      "homonym_claims": []
+    }
+  ],
+  "terms": [
+    {
+      "id": "term_c40ae20ab552b58554dd205b9a1742cbb4c295fe6fe80eaca7c62f0850c5d310",
+      "kind": "structure",
+      "characteristic_type": null,
+      "sense_note": null,
+      "scope_note": null,
+      "expressions": [
+        {
+          "text": "head",
+          "role": "preferred",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_10"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "term_5ec6848bc421420de09448e2ee4df2b605cf4d1843bbe7cc20097c24f8b4f76d",
+      "kind": "structure",
+      "characteristic_type": null,
+      "sense_note": null,
+      "scope_note": null,
+      "expressions": [
+        {
+          "text": "head scales",
+          "role": "preferred",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11"
+          ]
+        },
+        {
+          "text": "head-scales",
+          "role": "grammatical_variant",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "term_a8d58209a1aef53bcab286d6a21e898f43a75a898db30ec5031dd793841481d0",
+      "kind": "character_state",
+      "characteristic_type": null,
+      "sense_note": null,
+      "scope_note": null,
+      "expressions": [
+        {
+          "text": "keeled",
+          "role": "preferred",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_9"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "term_49fcbe1d834855c20e3cad515fe39979670a61969c980af96453ff52d031a7b8",
+      "kind": "characteristic",
+      "characteristic_type": null,
+      "sense_note": null,
+      "scope_note": null,
+      "expressions": [
+        {
+          "text": "keeling",
+          "role": "preferred",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_8"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "term_bc9cb55e290dfb48c81aa330e59df59463bbc5c3120a0ff33bf370eae4ac1fad",
+      "kind": "structure",
+      "characteristic_type": null,
+      "sense_note": null,
+      "scope_note": null,
+      "expressions": [
+        {
+          "text": "midbody scale rows",
+          "role": "preferred",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_12"
+          ]
+        },
+        {
+          "text": "MBSR",
+          "role": "acronym",
+          "language": null,
+          "expansion": "midbody scale rows",
+          "observation_ids": [
+            "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_12"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "term_4eeb4011f070494eccc37038da6f77e791fb2371c90aa9759bef9bcc7caadc69",
+      "kind": "structure",
+      "characteristic_type": null,
+      "sense_note": null,
+      "scope_note": null,
+      "expressions": [
+        {
+          "text": "scales",
+          "role": "preferred",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_7"
+          ]
+        },
+        {
+          "text": "scale",
+          "role": "grammatical_variant",
+          "language": null,
+          "expansion": null,
+          "observation_ids": [
+            "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_7"
+          ]
+        }
+      ],
+      "notes": ""
+    }
+  ],
+  "relationships": [
+    {
+      "subject_id": "term_49fcbe1d834855c20e3cad515fe39979670a61969c980af96453ff52d031a7b8",
+      "predicate": "describes",
+      "object_id": "term_4eeb4011f070494eccc37038da6f77e791fb2371c90aa9759bef9bcc7caadc69",
+      "status": "proposed",
+      "basis": "model_inference",
+      "observation_ids": [
+        "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_8"
+      ],
+      "rationale": "Synthetic example proposal"
+    },
+    {
+      "subject_id": "term_5ec6848bc421420de09448e2ee4df2b605cf4d1843bbe7cc20097c24f8b4f76d",
+      "predicate": "part_of",
+      "object_id": "term_c40ae20ab552b58554dd205b9a1742cbb4c295fe6fe80eaca7c62f0850c5d310",
+      "status": "proposed",
+      "basis": "model_inference",
+      "observation_ids": [
+        "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11"
+      ],
+      "rationale": "Synthetic example proposal"
+    },
+    {
+      "subject_id": "term_5ec6848bc421420de09448e2ee4df2b605cf4d1843bbe7cc20097c24f8b4f76d",
+      "predicate": "subtype_of",
+      "object_id": "term_4eeb4011f070494eccc37038da6f77e791fb2371c90aa9759bef9bcc7caadc69",
+      "status": "proposed",
+      "basis": "model_inference",
+      "observation_ids": [
+        "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11"
+      ],
+      "rationale": "Synthetic example proposal"
+    },
+    {
+      "subject_id": "term_a8d58209a1aef53bcab286d6a21e898f43a75a898db30ec5031dd793841481d0",
+      "predicate": "state_of",
+      "object_id": "term_49fcbe1d834855c20e3cad515fe39979670a61969c980af96453ff52d031a7b8",
+      "status": "proposed",
+      "basis": "model_inference",
+      "observation_ids": [
+        "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_9"
+      ],
+      "rationale": "Synthetic example proposal"
+    }
+  ],
+  "observation_dispositions": [
+    {
+      "observation_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_10",
+      "status": "mapped",
+      "term_ids": [
+        "term_c40ae20ab552b58554dd205b9a1742cbb4c295fe6fe80eaca7c62f0850c5d310"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_11",
+      "status": "mapped",
+      "term_ids": [
+        "term_5ec6848bc421420de09448e2ee4df2b605cf4d1843bbe7cc20097c24f8b4f76d"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_12",
+      "status": "mapped",
+      "term_ids": [
+        "term_bc9cb55e290dfb48c81aa330e59df59463bbc5c3120a0ff33bf370eae4ac1fad"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_14",
+      "status": "unresolved",
+      "term_ids": [],
+      "reason": "Retained section boilerplate"
+    },
+    {
+      "observation_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_7",
+      "status": "mapped",
+      "term_ids": [
+        "term_4eeb4011f070494eccc37038da6f77e791fb2371c90aa9759bef9bcc7caadc69"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_8",
+      "status": "mapped",
+      "term_ids": [
+        "term_49fcbe1d834855c20e3cad515fe39979670a61969c980af96453ff52d031a7b8"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "src_5ad7e3183417930a7f1ad82d52ab05c094bf0551925b6ca4ee36865e7082b654_line_9",
+      "status": "mapped",
+      "term_ids": [
+        "term_a8d58209a1aef53bcab286d6a21e898f43a75a898db30ec5031dd793841481d0"
+      ],
+      "reason": null
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "UNRESOLVED_OBSERVATION",
+      "path": "/observation_dispositions/6",
+      "message": "Retained section boilerplate"
+    }
+  ],
+  "review_notes": []
+}

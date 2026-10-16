@@ -1,0 +1,156 @@
+{
+  "format_version": "synthesis-proposal-1.0",
+  "proposal_id": "fixture-proposal",
+  "input_sha256": "88b1ee1eee82623888767b0148f11272f5fb2108a0e55f68ba7f236b2d22daec",
+  "provider": "offline",
+  "model": "fixture",
+  "prompt_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "records": [
+    {
+      "ref": "model_anal",
+      "role": "anatomical_noun",
+      "text": "anal",
+      "observation_ids": [
+        "o1"
+      ],
+      "parent_refs": [],
+      "subterm_refs": [],
+      "type": null,
+      "rationale": "Synthetic vocabulary classification proposed for offline contract testing."
+    },
+    {
+      "ref": "model_tail",
+      "role": "anatomical_noun",
+      "text": "tail",
+      "observation_ids": [
+        "o4"
+      ],
+      "parent_refs": [],
+      "subterm_refs": [],
+      "type": null,
+      "rationale": "Synthetic vocabulary classification proposed for offline contract testing."
+    },
+    {
+      "ref": "model_anal_entire",
+      "role": "compound",
+      "text": "anal entire",
+      "observation_ids": [
+        "o3"
+      ],
+      "parent_refs": [
+        "model_anal"
+      ],
+      "subterm_refs": [
+        "model_entire"
+      ],
+      "type": null,
+      "rationale": "Synthetic vocabulary classification proposed for offline contract testing."
+    },
+    {
+      "ref": "model_tail_spine",
+      "role": "compound",
+      "text": "tail spine",
+      "observation_ids": [
+        "o6"
+      ],
+      "parent_refs": [
+        "model_tail"
+      ],
+      "subterm_refs": [
+        "model_spine"
+      ],
+      "type": null,
+      "rationale": "Synthetic vocabulary classification proposed for offline contract testing."
+    },
+    {
+      "ref": "model_entire",
+      "role": "subterm",
+      "text": "entire",
+      "observation_ids": [
+        "o2"
+      ],
+      "parent_refs": [],
+      "subterm_refs": [],
+      "type": "morphological_descriptor",
+      "rationale": "Synthetic vocabulary classification proposed for offline contract testing."
+    },
+    {
+      "ref": "model_spine",
+      "role": "subterm",
+      "text": "spine",
+      "observation_ids": [
+        "o5"
+      ],
+      "parent_refs": [],
+      "subterm_refs": [],
+      "type": "supporting_noun",
+      "rationale": "Synthetic vocabulary classification proposed for offline contract testing."
+    }
+  ],
+  "observation_dispositions": [
+    {
+      "observation_id": "o1",
+      "status": "mapped",
+      "record_refs": [
+        "model_anal"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "o2",
+      "status": "mapped",
+      "record_refs": [
+        "model_entire"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "o3",
+      "status": "mapped",
+      "record_refs": [
+        "model_anal_entire"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "o4",
+      "status": "mapped",
+      "record_refs": [
+        "model_tail"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "o5",
+      "status": "mapped",
+      "record_refs": [
+        "model_spine"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "o6",
+      "status": "mapped",
+      "record_refs": [
+        "model_tail_spine"
+      ],
+      "reason": null
+    },
+    {
+      "observation_id": "o7",
+      "status": "excluded",
+      "record_refs": [],
+      "reason": "Generic narrative in this synthetic fixture; preserved in inputs."
+    },
+    {
+      "observation_id": "o8",
+      "status": "unresolved",
+      "record_refs": [],
+      "reason": "Standalone state cannot be placed in these collections without review."
+    }
+  ],
+  "equivalence_proposals": [],
+  "review_notes": [
+    "No live model or biological verification was used."
+  ]
+}

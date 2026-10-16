@@ -1,0 +1,67 @@
+{
+  "$defs": {
+    "CandidateEntry": {
+      "additionalProperties": false,
+      "description": "Model output: quotations only; positions and canonical names are not requested.",
+      "properties": {
+        "term": {
+          "minLength": 1,
+          "title": "Term",
+          "type": "string"
+        },
+        "evidence_type": {
+          "enum": [
+            "complete",
+            "embedded"
+          ],
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "matched_text": {
+          "minLength": 1,
+          "title": "Matched Text",
+          "type": "string"
+        },
+        "source_phrase": {
+          "minLength": 1,
+          "title": "Source Phrase",
+          "type": "string"
+        },
+        "proposed_annotations": {
+          "default": null,
+          "description": "Optional unverified suggestions, conventionally an object with language (string or null) and forms (string array). Malformed suggestions yield warnings.",
+          "title": "Proposed Annotations"
+        }
+      },
+      "required": [
+        "term",
+        "evidence_type",
+        "matched_text",
+        "source_phrase"
+      ],
+      "title": "CandidateEntry",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {
+      "const": "extraction-3.0",
+      "title": "Format Version",
+      "type": "string"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/CandidateEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    }
+  },
+  "required": [
+    "format_version",
+    "entries"
+  ],
+  "title": "CandidateResponse",
+  "type": "object"
+}
